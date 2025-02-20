@@ -1,436 +1,87 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import { FiChevronDown, FiTrash2, FiEdit3 } from "react-icons/fi";
 import { gapi } from "gapi-script";
 
-const colorPalette = [
-  "#FF6F61", "#FFD166", "#06D6A0", "#118AB2", "#EF476F", "#FF9F1C",
-  "#FF6392", "#7BDFF2", "#B2F7EF", "#F4A261", "#FF007F", "#00FF7F",
-  "#00FFFF", "#FF00FF", "#FFD700", "#7FFF00", "#FF4500", "#8A2BE2",
-  "#FF1493", "#00FF00", "#2D3047", "#419D78", "#3D3B8E", "#4A4E69",
-  "#6A4C93", "#3F88C5", "#FF6B6B", "#4ECDC4", "#C7F464", "#FFE66D"
-];
+const CLIENT_ID = "218725761054-ts1m04d2qf9njhrrb29vkhel6uka1hvm.apps.googleusercontent.com";
+const API_KEY = "AIzaSyCbbg_58yOgTdpES_IecW0hTpo9XJRD638";
+// Scope allows read/write access to calendar events.
+const SCOPES = "https://www.googleapis.com/auth/calendar.events";
 
-interface Test {
-  subject: string;
-  startDate: string;
-  endDate: string;
-  difficulty: number;
-  color: string;
-}
-
-interface CalendarEvent {
-  title: string;
-  start: string;
-  backgroundColor: string;
-  allDay: boolean;
-}
-
-// ─── GOOGLE AUTHENTICATION COMPONENT ─────────────────────────────
-function GoogleAuth() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  
-  useEffect(() => {
-    // Initialize the gapi client when component mounts
-    function start() {
-      gapi.client.init({
-        apiKey: "YOUR_API_KEY", // Replace with your API key
-        clientId: "YOUR_CLIENT_ID.apps.googleusercontent.com", // Replace with your Client ID
-        scope: "https://www.googleapis.com/auth/calendar.events",
+export const initGoogleApi = () => {
+  if (typeof window !== "undefined") {
+    gapi.load("client:auth2", async () => {
+      await gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
         discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-      }).then(() => {
-        const authInstance = gapi.auth2.getAuthInstance();
-        setIsSignedIn(authInstance.isSignedIn.get());
-        authInstance.isSignedIn.listen(setIsSignedIn);
+        scope: SCOPES,
       });
-    }
-    gapi.load("client:auth2", start);
-  }, []);
-  
-  const handleSignIn = () => {
-    gapi.auth2.getAuthInstance().signIn();
-  };
-  
-  const handleSignOut = () => {
-    gapi.auth2.getAuthInstance().signOut();
-  };
-  
-  return (
-    <div className="mb-4 flex gap-4">
-      {isSignedIn ? (
-        <button
-          onClick={handleSignOut}
-          className="p-2 rounded bg-red-500 text-white hover:bg-red-600 transition"
-        >
-          Sign Out
-        </button>
-      ) : (
-        <button
-          onClick={handleSignIn}
-          className="p-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
-        >
-          Sign In with Google
-        </button>
-      )}
-    </div>
-  );
-}
-
-// ─── MAIN COMPONENT ─────────────────────────────────────────────
-export default function Home() {
-  // ─── STATE INITIALIZATION ─────────────────────────────
-  const [studyHours, setStudyHours] = useState<number>(() => {
-    const stored = localStorage.getItem("studyHours");
-    return stored ? JSON.parse(stored) : 3;
-  });
-  const [tests, setTests] = useState<Test[]>(() => {
-    const stored = localStorage.getItem("tests");
-    return stored ? JSON.parse(stored) : [];
-  });
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [openTestIndex, setOpenTestIndex] = useState<number | null>(null);
-  const [editingSubjectIndex, setEditingSubjectIndex] = useState<number | null>(null);
-
-  // ─── LOCAL STORAGE EFFECTS ─────────────────────────────
-  useEffect(() => {
-    localStorage.setItem("studyHours", JSON.stringify(studyHours));
-  }, [studyHours]);
-
-  useEffect(() => {
-    localStorage.setItem("tests", JSON.stringify(tests));
-  }, [tests]);
-
-  // ─── SCHEDULE RE-CALCULATION ───────────────────────────
-  useEffect(() => {
-    generateSchedule();
-  }, [tests, studyHours]);
-
-  // ─── GOOGLE CALENDAR EVENT SAVE FUNCTION ─────────────────────────
-  const saveEventsToGoogleCalendar = async () => {
-    // Ensure the user is signed in first
-    const authInstance = gapi.auth2.getAuthInstance();
-    if (!authInstance || !authInstance.isSignedIn.get()) {
-      alert("Please sign in with Google first.");
-      return;
-    }
-    // Loop through events and add them to the user's primary calendar.
-    events.forEach(async (event) => {
-      const calendarEvent = {
-        summary: event.title,
-        start: { date: event.start },
-        // For demo purposes, the event's end date is the same as the start date.
-        // You may adjust this logic to calculate proper end times.
-        end: { date: event.start },
-      };
-      try {
-        await gapi.client.calendar.events.insert({
-          calendarId: "primary",
-          resource: calendarEvent,
-        });
-        console.log("Event added:", calendarEvent);
-      } catch (error) {
-        console.error("Error adding event:", error);
-      }
     });
-    alert("Events have been sent to your Google Calendar.");
-  };
+  }
+};
 
-  // ─── CUSTOM EVENT RENDERER FOR FULLCALENDAR ────────────
-  const renderEventContent = (eventInfo: any) => {
-    const parts = eventInfo.event.title.split(" | ");
-    const subject = parts[0];
-    const allocated = parts[1];
-    return (
-      <div
-        className="p-2 rounded-lg text-white shadow hover:shadow-xl transition-shadow cursor-pointer"
-        style={{ backgroundColor: eventInfo.event.backgroundColor }}
-      >
-        <div className="font-bold text-sm">{subject}</div>
-        <div className="text-xs">{allocated}</div>
-      </div>
-    );
-  };
+export const signIn = async () => {
+  const authInstance = gapi.auth2.getAuthInstance();
+  if (!authInstance.isSignedIn.get()) {
+    await authInstance.signIn();
+  }
+  return authInstance.currentUser.get().getAuthResponse();
+};
 
-  // ─── TEST MANAGEMENT FUNCTIONS ─────────────────────────
-  const addTest = () => {
-    const randomColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-    setTests(prev => [
-      ...prev,
-      {
-        subject: "New Test",
-        startDate: "",
-        endDate: "",
-        difficulty: 1,
-        color: randomColor,
+export const signOut = () => {
+  const authInstance = gapi.auth2.getAuthInstance();
+  authInstance.signOut();
+};
+
+export const getCalendarEvents = async () => {
+  try {
+    const response = await gapi.client.calendar.events.list({
+      calendarId: "primary",
+      timeMin: new Date().toISOString(),
+      maxResults: 20,
+      singleEvents: true,
+      orderBy: "startTime",
+    });
+    return response.result.items || [];
+  } catch (error) {
+    console.error("Error fetching calendar events:", error);
+    return [];
+  }
+};
+
+export const createGoogleEvent = async (eventData: { title: string; startDate: string; endDate: string }) => {
+  try {
+    const response = await gapi.client.calendar.events.insert({
+      calendarId: "primary",
+      resource: {
+        summary: eventData.title,
+        start: { date: eventData.startDate },
+        end: { date: eventData.endDate },
       },
-    ]);
-  };
-
-  const deleteTest = (index: number) => {
-    setTests(prev => prev.filter((_, i) => i !== index));
-    if (openTestIndex === index) setOpenTestIndex(null);
-    if (editingSubjectIndex === index) setEditingSubjectIndex(null);
-  };
-
-  const updateTest = (index: number, key: keyof Test, value: string | number) => {
-    setTests(prev => {
-      const updated = [...prev];
-      updated[index][key] = value as never;
-      return updated;
     });
-  };
+    return response.result;
+  } catch (error) {
+    console.error("Error creating calendar event:", error);
+  }
+};
 
-  const toggleSettings = (index: number) => {
-    setOpenTestIndex(openTestIndex === index ? null : index);
-  };
+// This function loops through your local events and creates them on Google Calendar.
+export const syncLocalEventsToGoogle = async (localEvents: { title: string; start: string }[]) => {
+  try {
+    // Ensure the user is signed in before pushing events.
+    await signIn();
 
-  const clearTests = () => {
-    if (confirm("Are you sure you want to delete all tests?")) {
-      setTests([]);
-      setOpenTestIndex(null);
-      setEditingSubjectIndex(null);
+    // Loop through each local event.
+    for (const event of localEvents) {
+      const startDate = event.start;
+      // For all-day events, the end date is the day after the start date.
+      const dateObj = new Date(startDate);
+      dateObj.setDate(dateObj.getDate() + 1);
+      const endDate = dateObj.toISOString().split("T")[0];
+
+      await createGoogleEvent({ title: event.title, startDate, endDate });
     }
-  };
-
-  // ─── SCHEDULING LOGIC ────────────────────────────────────
-  const generateSchedule = () => {
-    let finalEvents: CalendarEvent[] = [];
-    const dateSet = new Set<string>();
-
-    // Gather all dates within each test's period
-    tests.forEach(test => {
-      if (!test.startDate || !test.endDate) return;
-      const start = new Date(test.startDate);
-      const end = new Date(test.endDate);
-      if (start > end) return;
-      let current = new Date(start);
-      while (current <= end) {
-        dateSet.add(current.toISOString().split("T")[0]);
-        current.setDate(current.getDate() + 1);
-      }
-    });
-
-    const allDates = Array.from(dateSet).sort();
-
-    // Precompute a static weight for each test based on its full period:
-    const testWeights = tests.map(test => {
-      if (!test.startDate || !test.endDate) return 0;
-      const start = new Date(test.startDate);
-      const end = new Date(test.endDate);
-      if (start > end) return 0;
-      const totalDays =
-        Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      return test.difficulty / totalDays;
-    });
-
-    // Allocate study hours for each day among active tests
-    allDates.forEach(date => {
-      const activeTests = tests
-        .map((test, idx) => ({ test, idx }))
-        .filter(({ test }) => {
-          if (!test.startDate || !test.endDate) return false;
-          const start = new Date(test.startDate);
-          const end = new Date(test.endDate);
-          const current = new Date(date);
-          return current >= start && current <= end;
-        });
-      if (activeTests.length === 0) return;
-
-      const totalWeight = activeTests.reduce((sum, { idx }) => sum + (testWeights[idx] || 0), 0);
-      activeTests.forEach(({ test, idx }) => {
-        const weight = testWeights[idx] || 0;
-        const allocated = studyHours * (weight / totalWeight);
-        finalEvents.push({
-          title: `${test.subject} | ${allocated.toFixed(1)}h`,
-          start: date,
-          backgroundColor: test.color,
-          allDay: true,
-        });
-      });
-    });
-
-    setEvents(finalEvents);
-  };
-
-  // ─── RENDER ─────────────────────────────────────────────
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-100 text-gray-900">
-      {/* Header */}
-      <header className="p-6 mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-2 text-white">
-          Study Planner
-        </h1>
-        <p className="text-center text-lg md:text-xl text-indigo-100 font-medium">
-          Plan your study schedule in just a few clicks.
-        </p>
-      </header>
-
-      <div className="flex-1 flex flex-col md:flex-row max-w-7xl mx-auto w-full px-4 py-6 gap-6">
-        {/* Sidebar */}
-        <aside className="md:w-1/3 lg:w-1/4 bg-white shadow-xl rounded-xl p-6 md:sticky md:top-6 self-start">
-          {/* Google Authentication */}
-          <GoogleAuth />
-
-          {/* Button to Save Events to Google Calendar */}
-          <button
-            onClick={saveEventsToGoogleCalendar}
-            className="w-full mb-6 p-3 rounded-lg shadow text-white bg-green-600 hover:bg-green-700 transition-colors"
-          >
-            Save to Google Calendar
-          </button>
-
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Max Study Hours / Day
-            </label>
-            <input
-              type="number"
-              value={studyHours}
-              min="1"
-              max="24"
-              onChange={e => setStudyHours(parseInt(e.target.value) || 1)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-            />
-          </div>
-
-          <button
-            onClick={addTest}
-            className="w-full mb-6 p-3 rounded-lg shadow text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
-          >
-            + Add Test
-          </button>
-
-          {tests.map((test, index) => (
-            <div key={index} className="mb-4">
-              <div
-                className="flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors text-white"
-                style={{ backgroundColor: test.color }}
-                onClick={() => toggleSettings(index)}
-              >
-                {editingSubjectIndex === index ? (
-                  <input
-                    type="text"
-                    value={test.subject}
-                    autoFocus
-                    onClick={e => e.stopPropagation()}
-                    onChange={e => updateTest(index, "subject", e.target.value)}
-                    onBlur={() => setEditingSubjectIndex(null)}
-                    className="bg-white text-gray-700 px-2 py-1 rounded focus:outline-none"
-                  />
-                ) : (
-                  <span className="font-semibold truncate">{test.subject}</span>
-                )}
-
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      setEditingSubjectIndex(index);
-                    }}
-                    className="hover:text-gray-200"
-                  >
-                    <FiEdit3 size={16} />
-                  </button>
-                  <FiChevronDown
-                    size={20}
-                    className={`transform transition-transform duration-300 ${
-                      openTestIndex === index ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-              </div>
-
-              {openTestIndex === index && (
-                <div className="p-4 border-l border-r border-b border-gray-200 bg-gray-50 rounded-b-lg">
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      value={test.startDate}
-                      onChange={e => updateTest(index, "startDate", e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      End Date
-                    </label>
-                    <input
-                      type="date"
-                      value={test.endDate}
-                      onChange={e => updateTest(index, "endDate", e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Difficulty
-                    </label>
-                    <div className="flex items-center gap-2">
-                      {[1, 2, 3, 4, 5].map(level => {
-                        const colorClasses = [
-                          "bg-blue-500",
-                          "bg-green-500",
-                          "bg-yellow-500",
-                          "bg-orange-500",
-                          "bg-red-500"
-                        ];
-                        return (
-                          <div
-                            key={level}
-                            onClick={() => updateTest(index, "difficulty", level)}
-                            className={`
-                              w-8 h-8 rounded cursor-pointer transition-all duration-200 
-                              ${colorClasses[level - 1]} 
-                              ${test.difficulty === level ? "ring-2 ring-offset-2 ring-offset-gray-50 ring-black" : ""}
-                            `}
-                          />
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => deleteTest(index)}
-                    className="w-full p-3 rounded-lg shadow text-white bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
-                  >
-                    <FiTrash2 className="mr-2" /> Delete Test
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {tests.length > 0 && (
-            <button
-              onClick={clearTests}
-              className="w-full p-3 mt-2 rounded-lg shadow text-white bg-red-600 hover:bg-red-700 transition-colors"
-            >
-              Clear All Tests
-            </button>
-          )}
-        </aside>
-
-        {/* Calendar */}
-        <main className="flex-1 bg-white rounded-xl shadow-lg p-4">
-          <div className="h-full">
-            <FullCalendar
-              plugins={[dayGridPlugin]}
-              initialView="dayGridMonth"
-              events={events}
-              eventContent={renderEventContent}
-              height="100%"
-              className="modern-calendar"
-            />
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-}
+    alert("Local events pushed to Google Calendar successfully!");
+  } catch (error) {
+    console.error("Error pushing local events to Google Calendar:", error);
+    alert("Failed to push local events to Google Calendar. Check console for details.");
+  }
+};

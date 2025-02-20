@@ -1,6 +1,10 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
 
 input, textarea {
     color: black !important; /* Ensures text inside inputs is black */
@@ -10,3 +14,5 @@ input, textarea {
     border-radius: 5px;
   }
   
+ 
+
