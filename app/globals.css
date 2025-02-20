@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input, textarea {
+    color: black !important; /* Ensures text inside inputs is black */
+    background-color: white !important; /* Ensures background stays white */
+    border: 1px solid #ccc; /* Optional: adds a light border */
+    padding: 8px;
+    border-radius: 5px;
+  }
+  
