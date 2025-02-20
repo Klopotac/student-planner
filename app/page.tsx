@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -19,7 +18,7 @@ export default function LandingPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        priceId: "price_your_price_id", // Replace with your actual price ID from Stripe if using subscription/product pricing; or remove if using Payment Intents.
+        priceId: "price_your_price_id", // Replace with your actual Stripe price ID
       }),
     });
     const session = await res.json();
@@ -33,7 +32,7 @@ export default function LandingPage() {
 
   const handleGoogleSuccess = (credentialResponse: any) => {
     console.log("Google login success:", credentialResponse);
-    // You can store the credential in state, context, or cookies.
+    // Optionally, store this data in local storage or context
   };
 
   const handleGoogleError = () => {

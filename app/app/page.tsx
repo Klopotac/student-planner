@@ -1,10 +1,13 @@
+// app/app/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
+import dynamic from "next/dynamic";
 import { FiChevronDown, FiTrash2, FiEdit3 } from "react-icons/fi";
-import { gapi } from "gapi-script";
+
+// Dynamically import FullCalendar to prevent SSR issues.
+const FullCalendar = dynamic(() => import("@fullcalendar/react"), { ssr: false });
+import dayGridPlugin from "@fullcalendar/daygrid";
 
 const colorPalette = [
   "#FF6F61", "#FFD166", "#06D6A0", "#118AB2", "#EF476F", "#FF9F1C",
@@ -34,31 +37,33 @@ function GoogleAuth() {
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
-    function start() {
-      gapi.client
-        .init({
-          apiKey: "YOUR_API_KEY", // Replace with your API key
-          clientId: "YOUR_CLIENT_ID", // Replace with your Client ID
+    if (typeof window !== "undefined") {
+      function start() {
+        gapi.client.init({
+          apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY, // Ensure this is set in your env variables
+          clientId: "YOUR_CLIENT_ID", // Replace with your actual client ID or use an env variable
           scope: "https://www.googleapis.com/auth/calendar.events",
-          discoveryDocs: [
-            "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
-          ],
-        })
-        .then(() => {
+          discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+        }).then(() => {
           const authInstance = gapi.auth2.getAuthInstance();
           setIsSignedIn(authInstance.isSignedIn.get());
           authInstance.isSignedIn.listen(setIsSignedIn);
         });
+      }
+      gapi.load("client:auth2", start);
     }
-    gapi.load("client:auth2", start);
   }, []);
 
   const handleSignIn = () => {
-    gapi.auth2.getAuthInstance().signIn();
+    if (typeof window !== "undefined") {
+      gapi.auth2.getAuthInstance().signIn();
+    }
   };
 
   const handleSignOut = () => {
-    gapi.auth2.getAuthInstance().signOut();
+    if (typeof window !== "undefined") {
+      gapi.auth2.getAuthInstance().signOut();
+    }
   };
 
   return (
@@ -83,34 +88,44 @@ function GoogleAuth() {
 }
 
 // ─── Main Component ─────────────────────────────────────────────
-export default function Home() {
-  const [studyHours, setStudyHours] = useState<number>(() => {
-    const stored = localStorage.getItem("studyHours");
-    return stored ? JSON.parse(stored) : 3;
-  });
-  const [tests, setTests] = useState<Test[]>(() => {
-    const stored = localStorage.getItem("tests");
-    return stored ? JSON.parse(stored) : [];
-  });
+export default function ProtectedAppPage() {
+  // Local states that use browser APIs are initialized safely.
+  const [studyHours, setStudyHours] = useState<number>(3);
+  const [tests, setTests] = useState<Test[]>([]);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [openTestIndex, setOpenTestIndex] = useState<number | null>(null);
   const [editingSubjectIndex, setEditingSubjectIndex] = useState<number | null>(null);
 
-  // Persist state in local storage
+  // Use useEffect to safely access localStorage (client-side only)
   useEffect(() => {
-    localStorage.setItem("studyHours", JSON.stringify(studyHours));
+    if (typeof window !== "undefined") {
+      const storedHours = localStorage.getItem("studyHours");
+      if (storedHours) setStudyHours(JSON.parse(storedHours));
+      const storedTests = localStorage.getItem("tests");
+      if (storedTests) setTests(JSON.parse(storedTests));
+    }
+  }, []);
+
+  // Persist changes to localStorage on the client
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("studyHours", JSON.stringify(studyHours));
+    }
   }, [studyHours]);
 
   useEffect(() => {
-    localStorage.setItem("tests", JSON.stringify(tests));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tests", JSON.stringify(tests));
+    }
   }, [tests]);
 
   useEffect(() => {
     generateSchedule();
   }, [tests, studyHours]);
 
-  // Save events to Google Calendar
+  // Save events to Google Calendar (only runs on client)
   const saveEventsToGoogleCalendar = async () => {
+    if (typeof window === "undefined") return;
     const authInstance = gapi.auth2.getAuthInstance();
     if (!authInstance || !authInstance.isSignedIn.get()) {
       alert("Please sign in with Google first.");
@@ -120,7 +135,7 @@ export default function Home() {
       const calendarEvent = {
         summary: event.title,
         start: { date: event.start },
-        end: { date: event.start }, // Adjust end time/date as needed
+        end: { date: event.start },
       };
       try {
         await gapi.client.calendar.events.insert({
@@ -193,7 +208,7 @@ export default function Home() {
 
   // Generate study events based on tests and study hours
   const generateSchedule = () => {
-    let finalEvents: CalendarEvent[] = [];
+    const finalEvents: CalendarEvent[] = [];
     const dateSet = new Set<string>();
 
     tests.forEach((test) => {
@@ -293,9 +308,7 @@ export default function Home() {
                 value={studyHours}
                 min="1"
                 max="24"
-                onChange={(e) =>
-                  setStudyHours(parseInt(e.target.value) || 1)
-                }
+                onChange={(e) => setStudyHours(parseInt(e.target.value) || 1)}
                 className="w-20 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
             </div>
@@ -329,9 +342,7 @@ export default function Home() {
                         value={test.subject}
                         autoFocus
                         onClick={(e) => e.stopPropagation()}
-                        onChange={(e) =>
-                          updateTest(index, "subject", e.target.value)
-                        }
+                        onChange={(e) => updateTest(index, "subject", e.target.value)}
                         onBlur={() => setEditingSubjectIndex(null)}
                         className="bg-white text-gray-700 px-2 py-1 rounded"
                       />
@@ -367,9 +378,7 @@ export default function Home() {
                         <input
                           type="date"
                           value={test.startDate}
-                          onChange={(e) =>
-                            updateTest(index, "startDate", e.target.value)
-                          }
+                          onChange={(e) => updateTest(index, "startDate", e.target.value)}
                           className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
                         />
                       </div>
@@ -380,9 +389,7 @@ export default function Home() {
                         <input
                           type="date"
                           value={test.endDate}
-                          onChange={(e) =>
-                            updateTest(index, "endDate", e.target.value)
-                          }
+                          onChange={(e) => updateTest(index, "endDate", e.target.value)}
                           className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
                         />
                       </div>
@@ -449,6 +456,6 @@ export default function Home() {
           </main>
         </div>
       </div>
-    </div> 
+    </div>
   );
 }

@@ -1,4 +1,3 @@
-// app/api/stripe/create-checkout-session.js
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
@@ -8,7 +7,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export async function POST(req) {
   try {
-    const { priceId } = await req.json(); // Expecting a priceId from the request body
+    const { priceId } = await req.json(); // Expecting the priceId in the request
 
     if (!priceId) {
       return NextResponse.json({ error: "Missing price ID" }, { status: 400 });
@@ -16,7 +15,7 @@ export async function POST(req) {
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      mode: "payment", // Change to "subscription" if needed
+      mode: "payment", // Change to "subscription" if necessary
       line_items: [
         {
           price: priceId,
