@@ -23,7 +23,7 @@ export default function Home() {
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId: "prod_RpMIh8hDfkqGTF" }), // Replace with actual price ID
+        body: JSON.stringify({ priceId: "price_1QvhZvJxQLhmtE094QvD12Bh" }), // Replace with actual price ID
       });
 
       if (!res.ok) {
