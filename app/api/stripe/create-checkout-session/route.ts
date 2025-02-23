@@ -1,28 +1,22 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-// Ensure the secret key is set in your environment variables
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("STRIPE_SECRET_KEY is not set");
-}
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-01-27.acacia",
 });
 
 export async function POST(req: Request) {
   try {
-    // Ensure the Price ID is always correct
-    const priceId = "price_1QvhZvJxQLhmtE094QvD12Bh"; // Your actual price ID
+    // ✅ Use your **one-time price ID** here
+    const priceId = "price_1QvhZvJxQLhmtE094QvD12Bh"; 
 
     if (!priceId) {
       return NextResponse.json({ error: "Missing priceId" }, { status: 400 });
     }
 
-    // Create a checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      mode: "subscription",
+      mode: "payment", // ✅ Change this to "payment" (not "subscription")
       line_items: [
         {
           price: priceId,
