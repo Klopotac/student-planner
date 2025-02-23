@@ -7,15 +7,14 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 export async function POST(req) {
   try {
-    const { priceId } = await req.json(); // Expecting the priceId in the request
-
+    const { priceId } = await req.json();
     if (!priceId) {
       return NextResponse.json({ error: "Missing price ID" }, { status: 400 });
     }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      mode: "payment", // Change to "subscription" if necessary
+      mode: "payment",
       line_items: [
         {
           price: priceId,
@@ -26,10 +25,9 @@ export async function POST(req) {
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/`,
     });
 
-    return NextResponse.json({ sessionId: session.id });
+    return NextResponse.json({ sessionId: session.id }); // ✅ Return sessionId instead of URL
   } catch (error) {
-    const err = error instanceof Error ? error : new Error("Unknown error");
-    console.error("Stripe Checkout Error:", err.message);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error("Stripe Checkout Error:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

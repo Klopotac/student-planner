@@ -14,19 +14,23 @@ export default function LandingPage() {
   const handleBuyNow = async () => {
     setLoading(true);
     const stripe = await stripePromise;
+
     const res = await fetch("/api/stripe/create-checkout-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        priceId: "price_your_price_id", // Replace with your actual Stripe price ID
+        priceId: "price_1NabcXyz123...", // ✅ Replace with your actual Stripe Price ID
       }),
     });
+
     const session = await res.json();
+
     if (session.sessionId) {
-      stripe?.redirectToCheckout({ sessionId: session.sessionId });
+      await stripe?.redirectToCheckout({ sessionId: session.sessionId }); // ✅ Fixed redirect logic
     } else {
       alert("Payment session creation failed.");
     }
+
     setLoading(false);
   };
 
