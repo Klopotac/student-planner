@@ -2,68 +2,62 @@
 
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { GoogleLogin } from "@react-oauth/google";
-import { useRouter } from "next/navigation";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
+);
 
-export default function LandingPage() {
-  const router = useRouter();
+export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const handleBuyNow = async () => {
     setLoading(true);
-    const stripe = await stripePromise;
 
-    const res = await fetch("/api/stripe/create-checkout-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        priceId: "price_1NabcXyz123...", // ✅ Replace with your actual Stripe Price ID
-      }),
-    });
+    if (!stripePromise) {
+      alert("Stripe is not initialized. Check your API key.");
+      setLoading(false);
+      return;
+    }
 
-    const session = await res.json();
+    try {
+      const res = await fetch("/api/stripe/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priceId: "price_your_price_id" }), // Replace with actual price ID
+      });
 
-    if (session.sessionId) {
-      await stripe?.redirectToCheckout({ sessionId: session.sessionId }); // ✅ Fixed redirect logic
-    } else {
-      alert("Payment session creation failed.");
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.error || "Something went wrong"}`);
+        setLoading(false);
+        return;
+      }
+
+      const session = await res.json();
+
+      if (session.url) {
+        window.location.href = session.url; // Redirect to Stripe Checkout
+      } else {
+        alert("Payment session creation failed.");
+      }
+    } catch (error) {
+      console.error("Checkout Error:", error);
+      alert("Something went wrong.");
     }
 
     setLoading(false);
   };
 
-  const handleGoogleSuccess = (credentialResponse: any) => {
-    console.log("Google login success:", credentialResponse);
-    // Optionally, store this data in local storage or context
-  };
-
-  const handleGoogleError = () => {
-    console.error("Google login error");
-  };
-
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="max-w-4xl p-8 bg-white shadow-xl rounded-lg text-center">
-        <h1 className="text-4xl font-bold mb-4">Student Planner Premium</h1>
-        <p className="text-lg mb-8">
-          Plan, schedule, and conquer your tests with style. Get full access for just €2.
-        </p>
-        <button
-          onClick={handleBuyNow}
-          className="px-6 py-3 bg-indigo-600 text-white rounded-md shadow-md hover:bg-indigo-700 transition"
-          disabled={loading}
-        >
-          {loading ? "Processing..." : "Buy Now for €2"}
-        </button>
-        <div className="mt-8">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-          />
-        </div>
-      </div>
-    </div>
+    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+      <h1 className="text-3xl font-bold mb-4">Buy Our Product</h1>
+      <button
+        onClick={handleBuyNow}
+        disabled={loading}
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+      >
+        {loading ? "Processing..." : "Buy Now"}
+      </button>
+    </main>
   );
 }
