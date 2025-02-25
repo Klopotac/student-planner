@@ -3,17 +3,25 @@ import { getApps } from "firebase-admin/app";
 
 if (!getApps().length) {
   try {
-    const serviceAccount = JSON.parse(
-      process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string // Update this to match Vercel
-    );
+    const serviceAccount = process.env.FIREBASE_ADMIN_CREDENTIALS;
+
+    if (!serviceAccount) {
+      throw new Error("Missing FIREBASE_ADMIN_CREDENTIALS environment variable.");
+    }
+
+    const parsedCredentials = JSON.parse(serviceAccount);
 
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert(parsedCredentials),
     });
 
     console.log("🔥 Firebase Admin Initialized");
   } catch (error) {
-    console.error("❌ Firebase Admin SDK failed to initialize:", error);
+    if (error instanceof Error) {
+      console.error("❌ Firebase Admin SDK failed to initialize:", error.message);
+    } else {
+      console.error("❌ An unknown error occurred while initializing Firebase Admin SDK.");
+    }
   }
 }
 
