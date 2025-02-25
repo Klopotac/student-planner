@@ -1,26 +1,19 @@
-"use client";
-
+// app/layout.tsx
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { SessionProvider } from "next-auth/react";
+import { Metadata } from "next";
+import ClientProvider from "./components/ClientProvider"; // We create this below
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Student Planner",
   description: "A tool to organize your study schedule",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
-      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
-        <html lang="en">
-          <body>
-            
-            {children}
-          </body>
-        </html>
-      </GoogleOAuthProvider>
-    </SessionProvider>
+    <html lang="en">
+      <body>
+        <ClientProvider>{children}</ClientProvider> {/* Wrap children with ClientProvider */}
+      </body>
+    </html>
   );
 }
