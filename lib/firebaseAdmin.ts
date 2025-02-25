@@ -1,16 +1,20 @@
-import { initializeApp, cert, getApps } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import admin from "firebase-admin";
+import { getApps } from "firebase-admin/app";
 
-if (!process.env.FIREBASE_ADMIN_CREDENTIALS) {
-  throw new Error("Missing Firebase admin credentials");
-}
+if (!getApps().length) {
+  try {
+    const serviceAccount = JSON.parse(
+      process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string // Update this to match Vercel
+    );
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIALS);
-
-const adminApp = getApps().length
-  ? getApps()[0]
-  : initializeApp({
-      credential: cert(serviceAccount),
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
     });
 
-export const adminDb = getFirestore(adminApp);
+    console.log("🔥 Firebase Admin Initialized");
+  } catch (error) {
+    console.error("❌ Firebase Admin SDK failed to initialize:", error);
+  }
+}
+
+export default admin;

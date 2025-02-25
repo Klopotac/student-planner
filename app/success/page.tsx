@@ -16,15 +16,31 @@ function PaymentSuccess() {
       return;
     }
 
-    fetch("/api/user/update-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: stripeSessionId }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        router.push("/app"); // Redirect after updating
-      });
+    async function verifyPayment() {
+      try {
+        const res = await fetch("/api/user/update-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: stripeSessionId }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        if (data.success) {
+          router.push("/app"); // Redirect after updating
+        } else {
+          console.error("Payment update failed:", data.error);
+        }
+      } catch (err) {
+        console.error("Error updating payment:", err);
+      }
+    }
+
+    verifyPayment();
   }, [stripeSessionId, router]);
 
   return <div>Payment successful! Updating your account...</div>;

@@ -1,48 +1,38 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions, Session, User, DefaultSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { adminDb } from "../../../../lib/firebaseAdmin"; // Adjust the path if needed
-import { NextAuthOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";
 
-// Extend the Session type to include a "paid" flag
+// Extend NextAuth's Session type to ensure user always has an email
 declare module "next-auth" {
   interface Session {
     user: {
       name?: string | null;
-      email?: string | null;
+      email: string; // Ensures email is always a string
       image?: string | null;
-      paid?: boolean;
-    };
+    } & DefaultSession["user"];
   }
 }
 
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async session({ session }) {
-      if (session.user?.email) {
-        const userDoc = await adminDb
-          .collection("users")
-          .doc(session.user.email)
-          .get();
-        session.user.paid = userDoc.exists ? userDoc.data()?.paid || false : false;
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (!session.user) {
+        session.user = {} as Session["user"];
       }
+      session.user.email = token.email as string ?? ""; // Ensures email is always a string
       return session;
     },
-    async signIn({ user }) {
-      if (user.email) {
-        const userRef = adminDb.collection("users").doc(user.email);
-        const doc = await userRef.get();
-        if (!doc.exists) {
-          await userRef.set({ paid: false });
-        }
+    async jwt({ token, user }: { token: JWT; user?: User }) {
+      if (user) {
+        token.email = user.email as string ?? ""; // Ensures email is always a string
       }
-      return true;
+      return token;
     },
   },
 };
