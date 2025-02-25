@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 export async function POST(req: Request) {
   try {
     // ✅ Use your **one-time price ID** here
-    const priceId = "price_1QvhZvJxQLhmtE094QvD12Bh"; 
+    const priceId = "price_1QwObpJxQLhmtE09Q9FlilsN"; 
 
     if (!priceId) {
       return NextResponse.json({ error: "Missing priceId" }, { status: 400 });
