@@ -1,4 +1,3 @@
-// app/login/page.tsx
 "use client";
 
 import { signIn, useSession } from "next-auth/react";
@@ -6,15 +5,17 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
-  // If the user is already signed in, redirect them to the landing page (or protected app)
+  // Redirect if already logged in
   useEffect(() => {
     if (session) {
-      router.push("/"); // or to your protected page if desired
+      router.push("/"); // Redirect to landing or protected page
     }
   }, [session, router]);
+
+  if (status === "loading") return <p>Loading...</p>;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

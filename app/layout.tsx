@@ -1,7 +1,9 @@
-// app/layout.tsx
+"use client";
+
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { SessionProvider } from "next-auth/react";
 
 export const metadata = {
   title: "Student Planner",
@@ -10,13 +12,15 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
-          
-          {children}
-        </GoogleOAuthProvider>
-      </body>
-    </html>
+    <SessionProvider>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+        <html lang="en">
+          <body>
+            
+            {children}
+          </body>
+        </html>
+      </GoogleOAuthProvider>
+    </SessionProvider>
   );
 }
