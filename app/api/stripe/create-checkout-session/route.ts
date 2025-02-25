@@ -2,41 +2,35 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/route"; // adjust path as needed
+import { authOptions } from "../../auth/[...nextauth]/route"; // Adjust path as needed
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-01-27.acacia",
 });
 
 export async function POST(req: Request) {
-  // Verify the user is authenticated
+  // Ensure the user is authenticated
   const session = await getServerSession(authOptions);
-  if (!session) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
   try {
-    // Use your one-time price ID here
-    const priceId = "price_1QwObpJxQLhmtE09Q9FlilsN";
+    // Define your one-time price ID
+    const priceId = process.env.STRIPE_PRICE_ID || "price_1QwObpJxQLhmtE09Q9FlilsN";
 
     if (!priceId) {
       return NextResponse.json({ error: "Missing priceId" }, { status: 400 });
     }
 
+    // Create Stripe Checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      // After successful payment, redirect to your success page
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/cancel`,
-      // You can optionally attach the user's email (from session) to the Checkout session
-      customer_email: session.user?.email || undefined,
+      customer_email: session.user.email, // Attach user's email
     });
 
     return NextResponse.json({ url: checkoutSession.url });
