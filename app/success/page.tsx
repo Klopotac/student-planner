@@ -1,11 +1,10 @@
-// app/success/page.tsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
-export default function PaymentSuccess() {
+function PaymentSuccess() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: session } = useSession();
@@ -17,8 +16,6 @@ export default function PaymentSuccess() {
       return;
     }
 
-    // Call an API route to update the payment status for the current user.
-    // In a real app, verify the payment with Stripe here.
     fetch("/api/user/update-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,11 +23,17 @@ export default function PaymentSuccess() {
     })
       .then((res) => res.json())
       .then((data) => {
-        // Optionally, you can refresh the session so that the "paid" flag is updated
-        // For example, using next-auth's useSession() hook with a callback URL.
-        router.push("/app"); // redirect to the protected app page
+        router.push("/app"); // Redirect after updating
       });
   }, [stripeSessionId, router]);
 
   return <div>Payment successful! Updating your account...</div>;
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentSuccess />
+    </Suspense>
+  );
 }
