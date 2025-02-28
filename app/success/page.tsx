@@ -8,7 +8,7 @@ function PaymentSuccess() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { data: session } = useSession();
-  const stripeSessionId = searchParams.get("session_id");
+  const stripeSessionId = searchParams ? searchParams.get("session_id") : null;
 
   useEffect(() => {
     if (!stripeSessionId) {
