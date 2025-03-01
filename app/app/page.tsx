@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { FiChevronDown, FiTrash2, FiEdit3 } from "react-icons/fi";
+import Script from "next/script";
 
 // Dynamically import FullCalendar to prevent SSR issues.
 const FullCalendar = dynamic(() => import("@fullcalendar/react"), { ssr: false });
@@ -35,55 +36,71 @@ interface CalendarEvent {
 // ─── Google Authentication Component ─────────────────────────────
 function GoogleAuth() {
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [gapiLoaded, setGapiLoaded] = useState(false);
 
+  // Initialize Google API after script is loaded
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      function start() {
-        gapi.client.init({
-          apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY, // Ensure this is set in your env variables
-          clientId: "YOUR_CLIENT_ID", // Replace with your actual client ID or use an env variable
+    if (typeof window !== "undefined" && window.gapi && !gapiLoaded) {
+      function initGoogleAPI() {
+        window.gapi.client.init({
+          apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+          clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
           scope: "https://www.googleapis.com/auth/calendar.events",
           discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
         }).then(() => {
-          const authInstance = gapi.auth2.getAuthInstance();
-          setIsSignedIn(authInstance.isSignedIn.get());
-          authInstance.isSignedIn.listen(setIsSignedIn);
+          if (window.gapi.auth2) {
+            const authInstance = window.gapi.auth2.getAuthInstance();
+            setIsSignedIn(authInstance.isSignedIn.get());
+            authInstance.isSignedIn.listen(setIsSignedIn);
+          }
+          setGapiLoaded(true);
+        }).catch(err => {
+          console.error("Error initializing Google API:", err);
         });
       }
-      gapi.load("client:auth2", start);
+      
+      if (window.gapi.client) {
+        initGoogleAPI();
+      } else {
+        window.gapi.load("client:auth2", initGoogleAPI);
+      }
     }
-  }, []);
+  }, [gapiLoaded]);
 
   const handleSignIn = () => {
-    if (typeof window !== "undefined") {
-      gapi.auth2.getAuthInstance().signIn();
+    if (typeof window !== "undefined" && window.gapi && window.gapi.auth2) {
+      window.gapi.auth2.getAuthInstance().signIn();
+    } else {
+      console.error("Google API not loaded yet");
     }
   };
 
   const handleSignOut = () => {
-    if (typeof window !== "undefined") {
-      gapi.auth2.getAuthInstance().signOut();
+    if (typeof window !== "undefined" && window.gapi && window.gapi.auth2) {
+      window.gapi.auth2.getAuthInstance().signOut();
     }
   };
 
   return (
-    <div className="flex space-x-4">
-      {isSignedIn ? (
-        <button
-          onClick={handleSignOut}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition"
-        >
-          Sign Out
-        </button>
-      ) : (
-        <button
-          onClick={handleSignIn}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition"
-        >
-          Sign In with Google
-        </button>
-      )}
-    </div>
+    <>
+      <div className="flex space-x-4">
+        {isSignedIn ? (
+          <button
+            onClick={handleSignOut}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow transition"
+          >
+            Sign Out
+          </button>
+        ) : (
+          <button
+            onClick={handleSignIn}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition"
+          >
+            Sign In with Google
+          </button>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -95,6 +112,12 @@ export default function ProtectedAppPage() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [openTestIndex, setOpenTestIndex] = useState<number | null>(null);
   const [editingSubjectIndex, setEditingSubjectIndex] = useState<number | null>(null);
+  const [gapiReady, setGapiReady] = useState(false);
+
+  // Handle Google API script loading
+  const handleGapiLoaded = () => {
+    setGapiReady(true);
+  };
 
   // Use useEffect to safely access localStorage (client-side only)
   useEffect(() => {
@@ -125,29 +148,38 @@ export default function ProtectedAppPage() {
 
   // Save events to Google Calendar (only runs on client)
   const saveEventsToGoogleCalendar = async () => {
-    if (typeof window === "undefined") return;
-    const authInstance = gapi.auth2.getAuthInstance();
-    if (!authInstance || !authInstance.isSignedIn.get()) {
-      alert("Please sign in with Google first.");
-      return;
-    }
-    for (const event of events) {
-      const calendarEvent = {
-        summary: event.title,
-        start: { date: event.start },
-        end: { date: event.start },
-      };
-      try {
-        await gapi.client.calendar.events.insert({
-          calendarId: "primary",
-          resource: calendarEvent,
-        });
-        console.log("Event added:", calendarEvent);
-      } catch (error) {
-        console.error("Error adding event:", error);
+    if (typeof window === "undefined" || !window.gapi) return;
+    
+    try {
+      const authInstance = window.gapi.auth2.getAuthInstance();
+      if (!authInstance || !authInstance.isSignedIn.get()) {
+        alert("Please sign in with Google first.");
+        return;
       }
+      
+      for (const event of events) {
+        const calendarEvent = {
+          summary: event.title,
+          start: { date: event.start },
+          end: { date: event.start },
+        };
+        
+        try {
+          await window.gapi.client.calendar.events.insert({
+            calendarId: "primary",
+            resource: calendarEvent,
+          });
+          console.log("Event added:", calendarEvent);
+        } catch (error) {
+          console.error("Error adding event:", error);
+        }
+      }
+      
+      alert("Events have been added to your Google Calendar.");
+    } catch (error) {
+      console.error("Error saving to Google Calendar:", error);
+      alert("Failed to save events. Make sure you're signed in with Google.");
     }
-    alert("Events have been added to your Google Calendar.");
   };
 
   // Custom event renderer for FullCalendar
@@ -268,6 +300,13 @@ export default function ProtectedAppPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
+      {/* Load Google API Script */}
+      <Script
+        src="https://apis.google.com/js/api.js"
+        onLoad={handleGapiLoaded}
+        strategy="beforeInteractive"
+      />
+      
       {/* Header */}
       <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg py-10 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto text-center">
@@ -288,6 +327,7 @@ export default function ProtectedAppPage() {
             <button
               onClick={saveEventsToGoogleCalendar}
               className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow transition"
+              disabled={!gapiReady}
             >
               Save to Google Calendar
             </button>
