@@ -1,10 +1,19 @@
 // app/auth/signin/page.tsx
 "use client";
 
+import { Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
-export default function SignIn() {
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <SignIn />
+    </Suspense>
+  );
+}
+
+function SignIn() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams?.get("callbackUrl") || "/app";
   const error = searchParams?.get("error");
@@ -38,4 +47,8 @@ export default function SignIn() {
       </div>
     </div>
   );
+}
+
+function Loading() {
+  return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 }
