@@ -450,7 +450,6 @@ export default function ProtectedAppPage() {
                 events={events}
                 eventContent={renderEventContent}
                 height="70vh"
-                className="modern-calendar"
               />
             </div>
           </main>
