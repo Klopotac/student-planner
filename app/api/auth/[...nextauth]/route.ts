@@ -1,40 +1,15 @@
-import NextAuth, { NextAuthOptions, Session, User, DefaultSession } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { JWT } from "next-auth/jwt";
-
-// Extend NextAuth's Session type to ensure user always has an email
-declare module "next-auth" {
-  interface Session {
-    user: {
-      name?: string | null;
-      email: string; // Ensures email is always a string
-      image?: string | null;
-    } & DefaultSession["user"];
-  }
-}
+import { NextAuthOptions } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,  // Google Client ID
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,      // Google Client Secret
     }),
   ],
-  callbacks: {
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (!session.user) {
-        session.user = {} as Session["user"];
-      }
-      session.user.email = token.email as string ?? ""; // Ensures email is always a string
-      return session;
-    },
-    async jwt({ token, user }: { token: JWT; user?: User }) {
-      if (user) {
-        token.email = user.email as string ?? ""; // Ensures email is always a string
-      }
-      return token;
-    },
-  },
+  secret: process.env.NEXTAUTH_SECRET, // Secret for NextAuth sessions
 };
 
 const handler = NextAuth(authOptions);
