@@ -1,21 +1,19 @@
-// app/success/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-export default function SuccessPage() {
+function SuccessContent() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
-  const sessionId = searchParams ? searchParams.get("session_id") : null;
+  const sessionId = searchParams?.get("session_id");
 
   useEffect(() => {
     if (!sessionId) {
-      // If no session ID, redirect to home
       router.push("/");
       return;
     }
@@ -24,11 +22,9 @@ export default function SuccessPage() {
       try {
         const response = await fetch(`/api/stripe/verify-session?sessionId=${sessionId}`);
         if (response.ok) {
-          // Payment verified, update the session to reflect Pro status
           await update({ hasPro: true });
           setLoading(false);
         } else {
-          // Payment verification failed
           router.push("/");
         }
       } catch (error) {
@@ -79,5 +75,13 @@ export default function SuccessPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<p>Loading...</p>}>
+      <SuccessContent />
+    </Suspense>
   );
 }
