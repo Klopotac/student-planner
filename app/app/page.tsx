@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect, MouseEvent, TouchEvent, WheelEvent } from "react";
+import { useState, useRef, useEffect, MouseEvent, TouchEvent } from "react";
 import { useRouter } from "next/navigation";
 import { MapPin, Target, Trophy } from "lucide-react";
-
+import { useSession } from "next-auth/react";
 
 const ORIGINAL_WIDTH = 3545;
 const ORIGINAL_HEIGHT = 4413;
@@ -14,7 +14,7 @@ interface Coordinates {
   y: number;
 }
 
-interface Location {
+export interface Location {
   name: string;
   coordinates: Coordinates;
   image: string;
@@ -23,7 +23,7 @@ interface Location {
   hint: string;
 }
 
-const LOCATIONS: Location[] = [
+export const LOCATIONS: Location[] = [
   { name: "Gift Shop", coordinates: { x: 2951, y: 2700 }, image: "/locations/gift.png", description: "", difficulty: "Easy", hint: "" },
   { name: "Sticker Path", coordinates: { x: 2524, y: 1763 }, image: "/locations/sticker.png", description: "", difficulty: "Hard", hint: "" },
   { name: "Comando Spot", coordinates: { x: 3245, y: 2831 }, image: "/locations/comando.png", description: "", difficulty: "Hard", hint: "" },
@@ -67,6 +67,7 @@ interface GameState {
 export default function BeeSwarmGeoguesser() {
   const router = useRouter();
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
   const [transform, setTransform] = useState<Transform>({ scale: 1, offsetX: 0, offsetY: 0 });
   const [gameState, setGameState] = useState<GameState>({
     currentRoundLocations: [],
@@ -76,11 +77,12 @@ export default function BeeSwarmGeoguesser() {
     score: null,
     round: 1,
     totalScore: 0,
-    highScore: parseInt(localStorage.getItem("highScore") || "0"),
+    highScore: typeof window !== "undefined" ? parseInt(localStorage.getItem("highScore") || "0") : 0,
     isGuessSubmitted: false,
     gameOver: false,
   });
 
+  // On mount, start with a random game.
   useEffect(() => {
     const selected = shuffle(LOCATIONS).slice(0, Math.min(5, LOCATIONS.length));
     setGameState((prev) => ({
@@ -90,6 +92,27 @@ export default function BeeSwarmGeoguesser() {
       currentLocation: selected[0],
     }));
   }, []);
+
+  // Demo mode: use three preselected locations (e.g., the first three)
+  const handleDemo = () => {
+    if (!session) {
+      alert("You must be logged in to play the demo.");
+      return;
+    }
+    const demoLocations = [LOCATIONS[0], LOCATIONS[1], LOCATIONS[2]];
+    setGameState((prev) => ({
+      ...prev,
+      currentRoundLocations: demoLocations,
+      currentRoundIndex: 0,
+      currentLocation: demoLocations[0],
+      guess: null,
+      score: null,
+      round: 1,
+      totalScore: 0,
+      isGuessSubmitted: false,
+      gameOver: false,
+    }));
+  };
 
   const calculateDistance = (p1: Coordinates, p2: Coordinates): number => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
@@ -110,6 +133,14 @@ export default function BeeSwarmGeoguesser() {
         <div className="flex items-center">
           <MapPin className="mr-2" />
           <h1 className="text-3xl font-bold">Bee Swarm GeoGuesser</h1>
+          {session && (
+            <button
+              onClick={handleDemo}
+              className="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              Play Demo
+            </button>
+          )}
         </div>
         <div className="flex items-center space-x-4">
           <div className="text-lg flex items-center">
@@ -119,9 +150,20 @@ export default function BeeSwarmGeoguesser() {
         </div>
       </header>
       <main className="flex flex-col lg:flex-row gap-4">
-        <div ref={mapContainerRef} className="relative bg-white border rounded overflow-hidden flex-1" onClick={handleMapClick}>
-          <img src="app\app\BSSMap.png" alt="Bee Swarm Map" className="w-full h-full object-cover" draggable="false" />
+        <div
+          ref={mapContainerRef}
+          className="relative bg-white border rounded overflow-hidden flex-1"
+          onClick={handleMapClick}
+        >
+          <img
+            src="/BSSMap.png"
+            alt="Bee Swarm Map"
+            className="w-full h-full object-cover"
+            draggable="false"
+          />
+          {/* You can add overlays for the guess, markers, etc. */}
         </div>
+        {/* Additional UI components like score feedback, instructions, etc. */}
       </main>
     </div>
   );
