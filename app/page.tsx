@@ -14,6 +14,7 @@ import {
   StarIcon
 } from "@heroicons/react/24/outline";
 import { signIn, signOut, useSession } from "next-auth/react";
+import router from "next/router";
 
 // Initialize Stripe with your public key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "");
@@ -157,8 +158,9 @@ export default function Home() {
 
   // Placeholder function for Demo plan
   const handleDemo = () => {
-    alert("Demo mode coming soon!");
+    router.push('/demo');
   };
+  
 
   const fadeInUpVariants = {
     hidden: { opacity: 0, y: 20 },
