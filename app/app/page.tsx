@@ -120,7 +120,7 @@ export default function BeeSwarmGeoguesser() {
       </header>
       <main className="flex flex-col lg:flex-row gap-4">
         <div ref={mapContainerRef} className="relative bg-white border rounded overflow-hidden flex-1" onClick={handleMapClick}>
-          <img src="BSSMap.png" alt="Bee Swarm Map" className="w-full h-full object-cover" draggable="false" />
+          <img src="app\app\BSSMap.png" alt="Bee Swarm Map" className="w-full h-full object-cover" draggable="false" />
         </div>
       </main>
     </div>
