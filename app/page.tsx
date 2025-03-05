@@ -6,7 +6,6 @@ import Link from "next/link";
 import { loadStripe } from "@stripe/stripe-js";
 import { 
   SparklesIcon, 
-  ClockIcon, 
   CpuChipIcon, 
   CloudArrowUpIcon,
   CheckCircleIcon,
@@ -21,43 +20,55 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ""
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
-    role: "Medical Student",
-    content: "This planner helped me organize my study schedule for USMLE. The AI suggestions were spot-on!",
+    name: "Alex Turner",
+    role: "Beta Tester",
+    content: "Bee Swarm Geo Guesser is a refreshing twist on location-based games. I love the immersive experience!",
     rating: 5
   },
   {
-    name: "Marcus Chen",
-    role: "Computer Science Major",
-    content: "The focus mode is a game-changer. My productivity has increased by 40% since using this app.",
+    name: "Jordan Lee",
+    role: "Early Adopter",
+    content: "The combination of bee swarm simulation and geo guessing is both unique and engaging.",
     rating: 5
   },
   {
-    name: "Emma Davis",
-    role: "Law Student",
-    content: "Perfect for managing complex study materials. The cloud sync feature lets me study anywhere.",
+    name: "Casey Morgan",
+    role: "Enthusiast",
+    content: "The game offers an innovative challenge that keeps me coming back for more adventures.",
     rating: 4
   }
 ];
 
-const stats = [
-  { label: "Active Users", value: "10,000+" },
-  { label: "Study Hours Tracked", value: "1M+" },
-  { label: "Average Grade Improvement", value: "15%" },
-  { label: "Student Satisfaction", value: "98%" }
+const features = [
+  {
+    title: "Realistic Bee Swarm Simulation",
+    desc: "Watch and interact with authentic bee swarm behavior in a beautifully rendered environment.",
+    icon: UserGroupIcon,
+  },
+  {
+    title: "Geo Guessing Challenge",
+    desc: "Put your geography skills to the test as you identify locations from unique aerial views.",
+    icon: ChartBarIcon,
+  },
+  {
+    title: "Dynamic Environments",
+    desc: "Explore diverse landscapes that change with every playthrough for endless discovery.",
+    icon: SparklesIcon,
+  }
 ];
 
 const pricingTiers = [
   {
-    name: "Basic",
+    name: "Demo",
     price: "Free",
-    features: ["Basic AI scheduling", "Focus timer", "Progress tracking"],
-    cta: "Start Free"
+    features: ["Limited access preview", "Demo gameplay", "Early feedback"],
+    cta: "Try Demo",
+    demo: true
   },
   {
     name: "Pro",
     price: "€2/month",
-    features: ["Advanced AI scheduling", "Cloud sync", "Focus mode", "Priority support"],
+    features: ["Full access", "Exclusive features", "Priority support"],
     cta: "Get Pro",
     highlighted: true
   }
@@ -75,7 +86,7 @@ const AuthButton = () => {
             href="/app"
             className="rounded-full bg-blue-600 px-6 py-3 text-white hover:bg-blue-500 transition-all"
           >
-            Go to App
+            Go to Game
           </Link>
           <button 
             onClick={() => signOut()}
@@ -107,40 +118,7 @@ export default function Home() {
   const { scrollYProgress } = useScroll();
   const { data: session } = useSession();
 
-  const features = [
-    {
-      title: "AI Scheduling",
-      desc: "Our advanced AI analyzes your study patterns and optimizes your schedule for maximum retention and efficiency.",
-      icon: ClockIcon,
-    },
-    {
-      title: "Focus Mode",
-      desc: "Block distractions, track study sessions, and maintain your concentration with our intelligent focus tools.",
-      icon: CpuChipIcon,
-    },
-    {
-      title: "Cloud Sync",
-      desc: "Seamlessly sync your study plans across all devices. Never lose your progress.",
-      icon: CloudArrowUpIcon,
-    }
-  ];
-
-  const fadeInUpVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  // Stripe checkout function (same functionality as before)
+  // Stripe checkout function for Pro plan
   const handleBuyNow = async () => {
     setLoading(true);
     try {
@@ -165,7 +143,7 @@ export default function Home() {
 
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url; // Redirect to Stripe Checkout
+        window.location.href = data.url;
       } else {
         alert("No checkout session URL returned.");
       }
@@ -174,6 +152,26 @@ export default function Home() {
       alert("Checkout failed. Please try again.");
     }
     setLoading(false);
+  };
+
+  // Placeholder function for Demo plan
+  const handleDemo = () => {
+    alert("Demo mode coming soon!");
+  };
+
+  const fadeInUpVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
   };
 
   return (
@@ -207,14 +205,13 @@ export default function Home() {
               variants={fadeInUpVariants}
               className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl"
             >
-              Optimize Your Study Time
+              Experience the Buzz: Discover Bee Swarm Geo Guesser
             </motion.h1>
             <motion.p
               variants={fadeInUpVariants}
               className="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto"
             >
-              The ultimate AI-powered study planner to help you focus and succeed.
-              Transform your learning experience with personalized schedules and intelligent tracking.
+              Step into a world where nature meets navigation. Challenge your geo skills and dive into immersive bee swarm simulations across stunning landscapes.
             </motion.p>
             <motion.div
               variants={fadeInUpVariants}
@@ -224,54 +221,22 @@ export default function Home() {
               {!session && (
                 <>
                   <Link
-                    href="#pricing"
-                    className="rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-200 hover:scale-105"
+                    href="#features"
+                    className="rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-sm hover:bg-blue-500 transition-all duration-200 hover:scale-105"
                   >
-                    Get Started
+                    Play Now
                   </Link>
                   <Link
-                    href="#demo"
+                    href="#trailer"
                     className="rounded-full bg-gray-100 px-8 py-4 text-lg font-semibold text-gray-900 shadow-sm hover:bg-gray-200 transition-all duration-200 hover:scale-105"
                   >
-                    Watch Demo
+                    Watch Trailer
                   </Link>
                 </>
               )}
             </motion.div>
           </div>
         </motion.div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 bg-blue-600">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div 
-            className="grid grid-cols-2 gap-8 md:grid-cols-4"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={containerVariants}
-          >
-            {stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                variants={fadeInUpVariants}
-                className="text-center"
-              >
-                <motion.div 
-                  className="text-4xl font-bold text-white mb-2"
-                  initial={{ scale: 0.5 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ type: "spring", duration: 1, delay: i * 0.1 }}
-                >
-                  {stat.value}
-                </motion.div>
-                <div className="text-blue-100">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
       </section>
 
       {/* Features Section */}
@@ -284,7 +249,7 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Why Choose Our Planner?
+              Why Play Bee Swarm Geo Guesser?
             </h2>
           </motion.div>
           <motion.div 
@@ -294,7 +259,7 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {features.map((feature, i) => (
+            {features.map((feature) => (
               <motion.div
                 key={feature.title}
                 variants={fadeInUpVariants}
@@ -318,11 +283,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials Section */}
       <section className="py-24 bg-gray-50">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 text-center mb-16">
-            What Our Users Say
+            What Early Players Say
           </h2>
           <motion.div 
             className="grid grid-cols-1 gap-8 md:grid-cols-3"
@@ -331,7 +296,7 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {testimonials.map((testimonial, i) => (
+            {testimonials.map((testimonial) => (
               <motion.div
                 key={testimonial.name}
                 variants={fadeInUpVariants}
@@ -356,7 +321,7 @@ export default function Home() {
       <section className="py-24 bg-white" id="pricing">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 text-center mb-16">
-            Simple, Transparent Pricing
+            Choose Your Plan
           </h2>
           <motion.div 
             className="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl mx-auto"
@@ -387,7 +352,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <button 
-                  onClick={tier.name === "Pro" ? handleBuyNow : undefined}
+                  onClick={tier.demo ? handleDemo : handleBuyNow}
                   disabled={tier.name === "Pro" && loading}
                   className={`w-full py-3 px-6 rounded-full font-semibold ${
                     tier.highlighted
@@ -403,7 +368,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Call-to-Action Section */}
       <section className="py-24 bg-blue-600">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <motion.div 
@@ -413,10 +378,10 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl font-bold text-white mb-6">
-              Ready to Transform Your Study Habits?
+              Ready to Join the Swarm?
             </h2>
             <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of successful students who have already optimized their learning with our AI-powered study planner.
+              Immerse yourself in a unique blend of nature and navigation. Whether you’re trying the demo or going all in with Pro, your adventure awaits.
             </p>
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -471,7 +436,10 @@ export default function Home() {
           </div>
           <div className="mt-8 border-t border-gray-700 pt-8 text-center">
             <p className="text-sm text-gray-500">
-              &copy; 2025 Study Planner. All rights reserved.
+              &copy; 2025 Bee Swarm Geo Guesser. All rights reserved.
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Need help? Email us at <a href="mailto:help@yourdomain.com" className="underline">help@yourdomain.com</a>
             </p>
           </div>
         </div>
