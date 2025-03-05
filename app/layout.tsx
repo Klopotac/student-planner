@@ -1,5 +1,4 @@
 import "./globals.css";
-import Navbar from "./components/Navbar";
 import Providers from "./components/Providers"; // Import the new Providers component
 
 export const metadata = {
@@ -12,7 +11,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Providers>
-          <Navbar />
           {children}
         </Providers>
       </body>
