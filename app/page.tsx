@@ -41,18 +41,19 @@ const testimonials = [
 
 const features = [
   {
-    title: "Realistic Bee Swarm Simulation",
-    desc: "Watch and interact with authentic bee swarm behavior in a beautifully rendered environment.",
+    title: "100+ Locations",
+    desc: "Explore a wide range of locations on the map, each with unique difficulty.",
+    
     icon: UserGroupIcon,
   },
   {
     title: "Geo Guessing Challenge",
-    desc: "Put your geography skills to the test as you identify locations from unique aerial views.",
+    desc: "Put your game skills to the test as you identify locations from unique screenshots.",
     icon: ChartBarIcon,
   },
   {
-    title: "Dynamic Environments",
-    desc: "Explore diverse landscapes that change with every playthrough for endless discovery.",
+    title: "Free Demo",
+    desc: "Try the game for free with limited access and preview gameplay.",
     icon: SparklesIcon,
   }
 ];
@@ -426,7 +427,7 @@ export default function Home() {
             </div>
             <div>
               <h4 className="font-semibold mb-4">Connect</h4>
-              <ul className="space-y-2">
+              <ul className="space-y-2">  
                 <li>Twitter</li>
                 <li>LinkedIn</li>
                 <li>Facebook</li>
