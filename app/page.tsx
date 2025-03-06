@@ -3,7 +3,6 @@
 import { motion, useScroll } from "framer-motion";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import { 
   SparklesIcon, 
@@ -15,6 +14,7 @@ import {
   StarIcon
 } from "@heroicons/react/24/outline";
 import { signIn, signOut, useSession } from "next-auth/react";
+import router from "next/router";
 
 // Initialize Stripe with your public key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "");
@@ -119,7 +119,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const { scrollYProgress } = useScroll();
   const { data: session } = useSession();
-  const router = useRouter();
 
   // Stripe checkout function for Pro plan
   const handleBuyNow = async () => {
@@ -157,7 +156,7 @@ export default function Home() {
     setLoading(false);
   };
 
-  // Updated function for Demo plan with proper router
+  // Placeholder function for Demo plan
   const handleDemo = () => {
     router.push('/demo');
   };
@@ -385,13 +384,12 @@ export default function Home() {
               Ready to Join the Swarm?
             </h2>
             <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-              Immerse yourself in a unique blend of nature and navigation. Whether you're trying the demo or going all in with Pro, your adventure awaits.
+              Immerse yourself in a unique blend of nature and navigation. Whether you’re trying the demo or going all in with Pro, your adventure awaits.
             </p>
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:bg-blue-50 transition-colors duration-200"
-              onClick={handleDemo}
             >
               Get Started Now
             </motion.button>
