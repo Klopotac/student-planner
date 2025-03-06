@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
@@ -15,6 +15,16 @@ import {
   StarIcon
 } from "@heroicons/react/24/outline";
 import { signIn, signOut, useSession } from "next-auth/react";
+
+// Define Bee interface for type safety
+interface Bee {
+  initialX: number;
+  initialY: number;
+  opacity: number;
+  animateX: number[];
+  animateY: number[];
+  duration: number;
+}
 
 // Initialize Stripe with your public key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "");
@@ -119,6 +129,33 @@ export default function Home() {
   const { scrollYProgress } = useScroll();
   const { data: session } = useSession();
   const router = useRouter();
+  const [bees, setBees] = useState<Bee[]>([]);
+
+  // Generate bees on client-side only to avoid hydration issues
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const generateBees = (): Bee[] => {
+        return Array.from({ length: 10 }, () => ({
+          initialX: Math.random() * window.innerWidth,
+          initialY: Math.random() * window.innerHeight,
+          opacity: 0.6 + Math.random() * 0.4,
+          animateX: [
+            Math.random() * window.innerWidth,
+            Math.random() * window.innerWidth,
+            Math.random() * window.innerWidth
+          ],
+          animateY: [
+            Math.random() * window.innerHeight,
+            Math.random() * window.innerHeight,
+            Math.random() * window.innerHeight
+          ],
+          duration: 15 + Math.random() * 20
+        }));
+      };
+      
+      setBees(generateBees());
+    }
+  }, []);
 
   // Stripe checkout function for Pro plan
   const handleBuyNow = async () => {
@@ -183,7 +220,7 @@ export default function Home() {
       transition: {
         duration: 3,
         repeat: Infinity,
-        repeatType: "mirror" // ✅ Ensure it's exactly "loop", "reverse", or "mirror"
+        repeatType: "mirror"
       }
     }
   };
@@ -198,29 +235,21 @@ export default function Home() {
 
       {/* Floating Bees Animation */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(10)].map((_, i) => (
+        {bees.map((bee, i) => (
           <motion.div 
             key={i}
             className="absolute w-4 h-4 rounded-full bg-amber-400"
             initial={{ 
-              x: Math.random() * window.innerWidth, 
-              y: Math.random() * window.innerHeight,
-              opacity: 0.6 + Math.random() * 0.4
+              x: bee.initialX, 
+              y: bee.initialY,
+              opacity: bee.opacity
             }}
             animate={{
-              x: [
-                Math.random() * window.innerWidth,
-                Math.random() * window.innerWidth,
-                Math.random() * window.innerWidth
-              ],
-              y: [
-                Math.random() * window.innerHeight,
-                Math.random() * window.innerHeight,
-                Math.random() * window.innerHeight
-              ]
+              x: bee.animateX,
+              y: bee.animateY
             }}
             transition={{
-              duration: 15 + Math.random() * 20,
+              duration: bee.duration,
               repeat: Infinity,
               repeatType: "reverse"
             }}
