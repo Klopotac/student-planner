@@ -23,7 +23,7 @@ function SignIn() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold">Sign In</h2>
-          <p className="text-gray-600 mt-2">Access your Study Planner account</p>
+          <p className="text-gray-600 mt-2">Access bee sawrm premium</p>
         </div>
 
         {error && (

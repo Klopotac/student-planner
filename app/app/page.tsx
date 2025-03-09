@@ -365,7 +365,7 @@ export default function BeeSwarmGeoguesser() {
         <h1 className="text-4xl font-bold mb-4">Round Complete!</h1>
         <p className="text-xl mb-4">Your Score: {gameState.totalScore}</p>
         <button
-          onClick={() => router.push('/')}
+          onClick={() => router.push('/lobby')}
           className="rounded-full bg-amber-500 hover:bg-amber-600 text-white py-2 px-6 transition-all"
         >
           Home
