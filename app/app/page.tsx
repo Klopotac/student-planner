@@ -361,12 +361,12 @@ export default function BeeSwarmGeoguesser() {
   // When the game is over, show a summary screen with the score and a Home button.
   if (gameState.gameOver) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-900 p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-amber-50 to-white text-amber-900 p-6">
         <h1 className="text-4xl font-bold mb-4">Round Complete!</h1>
         <p className="text-xl mb-4">Your Score: {gameState.totalScore}</p>
         <button
           onClick={() => router.push('/')}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+          className="rounded-full bg-amber-500 hover:bg-amber-600 text-white py-2 px-6 transition-all"
         >
           Home
         </button>
@@ -375,27 +375,28 @@ export default function BeeSwarmGeoguesser() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 p-4">
-      <header className="mb-4 flex justify-between items-center">
-        <div className="flex items-center">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white text-amber-900 p-4">
+      <header className="mb-6 flex flex-col sm:flex-row justify-between items-center">
+        <div className="flex items-center mb-4 sm:mb-0">
           <MapPin className="mr-2" />
           <h1 className="text-3xl font-bold">Bee Swarm GeoGuesser</h1>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-6">
           <div className="text-lg flex items-center">
             <Trophy className="mr-2" />
-            High Score: <span className="ml-1">{gameState.highScore}</span>
+            <span className="font-semibold">High Score:</span> 
+            <span className="ml-1">{gameState.highScore}</span>
           </div>
           <div className="text-lg">
-            Total Score: <span>{gameState.totalScore}</span>
+            <span className="font-semibold">Total Score:</span> <span>{gameState.totalScore}</span>
           </div>
         </div>
       </header>
-      <main className="flex flex-col lg:flex-row gap-4">
+      <main className="flex flex-col lg:flex-row gap-6">
         {/* Map container */}
         <div 
           ref={mapContainerRef}
-          className="relative bg-white border rounded overflow-hidden flex-1"
+          className="relative bg-white border border-amber-200 rounded overflow-hidden flex-1 shadow-md"
           style={{ height: '600px', cursor: isDragging ? 'grabbing' : 'grab' }}
           onWheel={handleWheel}
           onMouseDown={handleMouseDown}
@@ -450,7 +451,7 @@ export default function BeeSwarmGeoguesser() {
                   top: `${gameState.guess.y}px`,
                   transform: 'translate(-50%, -50%)'
                 }}
-                className="absolute w-6 h-6 bg-red-500 rounded-full border border-white"
+                className="absolute w-6 h-6 bg-red-500 rounded-full border border-white shadow"
               />
             )}
             {/* Markers for actual location and guess after submission */}
@@ -462,7 +463,7 @@ export default function BeeSwarmGeoguesser() {
                     top: `${gameState.currentLocation!.coordinates.y}px`,
                     transform: 'translate(-50%, -50%)'
                   }}
-                  className="absolute w-6 h-6 bg-green-500 rounded-full border border-white"
+                  className="absolute w-6 h-6 bg-green-500 rounded-full border border-white shadow"
                 />
                 {gameState.guess && (
                   <div
@@ -471,7 +472,7 @@ export default function BeeSwarmGeoguesser() {
                       top: `${gameState.guess.y}px`,
                       transform: 'translate(-50%, -50%)'
                     }}
-                    className="absolute w-6 h-6 bg-red-500 rounded-full border border-white"
+                    className="absolute w-6 h-6 bg-red-500 rounded-full border border-white shadow"
                   />
                 )}
               </>
@@ -479,7 +480,7 @@ export default function BeeSwarmGeoguesser() {
           </div>
         </div>
         {/* Info panel */}
-        <div className="w-full lg:w-1/3 bg-white border p-6 rounded flex flex-col justify-between">
+        <div className="w-full lg:w-1/3 bg-white border border-amber-200 p-6 rounded shadow-md flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">
@@ -517,7 +518,7 @@ export default function BeeSwarmGeoguesser() {
             {!gameState.isGuessSubmitted && gameState.guess && (
               <button
                 onClick={submitGuess}
-                className="w-full bg-blue-500 hover:bg-blue-600 py-2 rounded text-white transition flex items-center justify-center"
+                className="w-full bg-amber-500 hover:bg-amber-600 py-2 rounded text-white transition-all flex items-center justify-center"
               >
                 <Target className="mr-2" /> Submit Guess
               </button>
