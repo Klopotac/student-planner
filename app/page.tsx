@@ -104,7 +104,8 @@ const AuthButton = () => {
     } else if (hasAccess) {
       router.push("/app");
     } else {
-      router.push("/pricing"); // Redirect to the payment page
+      // Scroll to the pricing section if they haven't purchased access
+      window.location.href = "/#pricing";
     }
   };
 
