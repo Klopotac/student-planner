@@ -94,7 +94,7 @@ const AuthButton = () => {
         <div className="flex items-center gap-2">
           <span className="text-sm">Buzz, {session.user?.name}!</span>
           <Link
-            href="/app"
+            href="/lobby"
             className="rounded-full bg-amber-500 px-6 py-3 text-white hover:bg-amber-400 transition-all"
           >
             Enter Hive
