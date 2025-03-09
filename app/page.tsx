@@ -87,40 +87,19 @@ const pricingTiers = [
 
 const AuthButton = () => {
   const { data: session } = useSession();
-  const router = useRouter();
-  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    if (session) {
-      // Simulated check for access: Replace this with an actual API/database call
-      const userHasAccess = localStorage.getItem("hasAccess") === "true"; 
-      setHasAccess(userHasAccess);
-    }
-  }, [session]);
-
-  const handleEnterHive = () => {
-    if (!session) {
-      signIn("google");
-    } else if (hasAccess) {
-      router.push("/app");
-    } else {
-      // Scroll to the pricing section if they haven't purchased access
-      window.location.href = "/#pricing";
-    }
-  };
-
+  
   return (
     <>
       {session ? (
         <div className="flex items-center gap-2">
           <span className="text-sm">Buzz, {session.user?.name}!</span>
-          <button
-            onClick={handleEnterHive}
+          <Link
+            href="/app"
             className="rounded-full bg-amber-500 px-6 py-3 text-white hover:bg-amber-400 transition-all"
           >
             Enter Hive
-          </button>
-          <button
+          </Link>
+          <button 
             onClick={() => signOut()}
             className="rounded-full bg-amber-100 px-6 py-3 text-amber-800 hover:bg-amber-200 transition-all"
           >
