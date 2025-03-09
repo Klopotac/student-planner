@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Game {
   score: number;
@@ -12,27 +12,13 @@ interface Game {
 }
 
 export default function Lobby() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const [games, setGames] = useState<Game[]>([]);
   const [totalLocations, setTotalLocations] = useState<number>(0);
+  const { data: session } = useSession();
+  const router = useRouter();
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    if (session) {
-      // Call API to check if the user has paid
-      fetch("/api/checkAccess")
-        .then((res) => res.json())
-        .then((data) => {
-          setHasAccess(data.hasAccess);
-        })
-        .catch((err) => {
-          console.error("Error checking access:", err);
-          setHasAccess(false);
-        });
-    }
-  }, [session]);
-
+  // Load saved games from localStorage
   useEffect(() => {
     const savedGames: Game[] = JSON.parse(localStorage.getItem("games") || "[]");
     setGames(savedGames);
@@ -44,13 +30,34 @@ export default function Lobby() {
     setTotalLocations(discoveredLocations.size);
   }, []);
 
+  // Check access status if user is logged in
+  useEffect(() => {
+    if (session) {
+      fetch("/api/checkAccess", { method: "GET" })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Failed to fetch access status");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setHasAccess(data.hasAccess);
+        })
+        .catch((err) => {
+          console.error("Error checking access:", err);
+          setHasAccess(false);
+        });
+    }
+  }, [session]);
+
+  // Handle the Play button click
   const handlePlay = () => {
     if (!session) {
-      router.push("/auth/signin"); // Redirect to sign in if not logged in
+      router.push("/auth/signin");
     } else if (hasAccess) {
-      router.push("/app"); // Redirect to the game if they have access
+      router.push("/app");
     } else {
-      router.push("/#pricing"); // Redirect to pricing if they haven't paid
+      router.push("/#pricing");
     }
   };
 
@@ -58,7 +65,6 @@ export default function Lobby() {
     <div className="flex flex-col items-center p-6">
       <h1 className="text-3xl font-bold mb-4">Game Lobby</h1>
       <p className="text-lg mb-2">Total Locations Discovered: {totalLocations}</p>
-      
       <Button className="mb-4" onClick={handlePlay}>
         Play
       </Button>
