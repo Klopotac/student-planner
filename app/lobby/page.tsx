@@ -88,6 +88,9 @@ export default function Lobby() {
 
   // Handle the Play button click
   const handlePlay = () => {
+    // Clear the old game state before starting a new one
+    localStorage.removeItem("currentGame");
+  
     if (!session) {
       router.push("/auth/signin");
     } else if (hasAccess) {
