@@ -513,7 +513,7 @@ export default function BeeSwarmGeoguesser() {
                   gameState.currentLocation?.difficulty === 'Easy' ? 'bg-green-200' :
                   gameState.currentLocation?.difficulty === 'Medium' ? 'bg-yellow-200' :
                   gameState.currentLocation?.difficulty === 'Hard' ? 'bg-orange-200' :
-                  'bg-red-200'
+                  'bg-indigo-950'
                 }
               `}>
                 {gameState.currentLocation?.difficulty}
