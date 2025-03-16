@@ -134,6 +134,22 @@ interface GameState {
   gameOver: boolean;
 }
 
+// Function to generate default game state.
+function getDefaultGameState(): GameState {
+  return {
+    currentRoundLocations: [],
+    currentLocation: null,
+    currentRoundIndex: 0,
+    guess: null,
+    score: null,
+    round: 1,
+    totalScore: 0,
+    highScore: parseInt(localStorage.getItem("highScore") || "0"),
+    isGuessSubmitted: false,
+    gameOver: false,
+  };
+}
+
 export default function BeeSwarmGeoguesser() {
   const router = useRouter();
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -146,18 +162,19 @@ export default function BeeSwarmGeoguesser() {
   const [dragStart, setDragStart] = useState<Coordinates>({ x: 0, y: 0 });
   const [countdown, setCountdown] = useState<number | null>(null);
 
-  const [gameState, setGameState] = useState<GameState>({
-    currentRoundLocations: [],
-    currentLocation: null,
-    currentRoundIndex: 0,
-    guess: null,
-    score: null,
-    round: 1,
-    totalScore: 0,
-    highScore: parseInt(typeof window !== "undefined" ? localStorage.getItem("highScore") || "0" : "0"),
-    isGuessSubmitted: false,
-    gameOver: false,
+  // Initialize game state from localStorage if available.
+  const [gameState, setGameState] = useState<GameState>(() => {
+    if (typeof window !== "undefined") {
+      const savedGame = localStorage.getItem("currentGame");
+      return savedGame ? JSON.parse(savedGame) : getDefaultGameState();
+    }
+    return getDefaultGameState();
   });
+
+  // Persist game state changes to localStorage.
+  useEffect(() => {
+    localStorage.setItem("currentGame", JSON.stringify(gameState));
+  }, [gameState]);
 
   // Start a new round (select 5 random locations)
   const startNewRound = () => {
@@ -175,18 +192,8 @@ export default function BeeSwarmGeoguesser() {
 
   // Reset game state for a fresh session.
   const resetGame = () => {
-    setGameState({
-      currentRoundLocations: [],
-      currentLocation: null,
-      currentRoundIndex: 0,
-      guess: null,
-      score: null,
-      round: 1,
-      totalScore: 0,
-      highScore: parseInt(localStorage.getItem("highScore") || "0"),
-      isGuessSubmitted: false,
-      gameOver: false,
-    });
+    const defaultState = getDefaultGameState();
+    setGameState(defaultState);
     startNewRound();
   };
 
@@ -194,9 +201,18 @@ export default function BeeSwarmGeoguesser() {
   const goToNextLocation = () => {
     setGameState(prev => {
       const newTotalScore = prev.totalScore + (prev.score || 0);
-      let newRoundIndex = prev.currentRoundIndex + 1;
+      const newHighScore = Math.max(newTotalScore, prev.highScore);
+      localStorage.setItem("highScore", newHighScore.toString());
+      const newRoundIndex = prev.currentRoundIndex + 1;
       if (newRoundIndex >= prev.currentRoundLocations.length) {
-        localStorage.setItem("highScore", Math.max(newTotalScore, prev.highScore).toString());
+        // Save game progress to localStorage
+       const newGameData = {
+        score: newTotalScore,
+        locations: prev.currentRoundLocations.map(loc => loc.name),
+      };
+      const savedGames = JSON.parse(localStorage.getItem("games") || "[]");
+      savedGames.push(newGameData);
+      localStorage.setItem("games", JSON.stringify(savedGames));
         return {
           ...prev,
           totalScore: newTotalScore,
@@ -204,9 +220,9 @@ export default function BeeSwarmGeoguesser() {
           currentLocation: null,
           guess: null,
           score: null,
+          highScore: newHighScore,
         };
       } else {
-        localStorage.setItem("highScore", Math.max(newTotalScore, prev.highScore).toString());
         return {
           ...prev,
           currentRoundIndex: newRoundIndex,
@@ -215,7 +231,7 @@ export default function BeeSwarmGeoguesser() {
           score: null,
           totalScore: newTotalScore,
           isGuessSubmitted: false,
-          highScore: Math.max(newTotalScore, prev.highScore)
+          highScore: newHighScore,
         };
       }
     });
@@ -277,6 +293,9 @@ export default function BeeSwarmGeoguesser() {
       goToNextLocation();
       return;
     }
+
+    
+
     const timer = setTimeout(() => {
       setCountdown(prev => (prev !== null ? prev - 1 : 0));
     }, 1000);
@@ -353,9 +372,11 @@ export default function BeeSwarmGeoguesser() {
     }
   }, []);
 
-  // Initialize first round on mount
+  // Initialize first round on mount if not loaded from saved state.
   useEffect(() => {
-    startNewRound();
+    if (gameState.currentRoundLocations.length === 0) {
+      startNewRound();
+    }
   }, []);
 
   // When the game is over, show a summary screen with the score and a Home button.
