@@ -205,6 +205,14 @@ export default function BeeSwarmGeoguesser() {
       localStorage.setItem("highScore", newHighScore.toString());
       const newRoundIndex = prev.currentRoundIndex + 1;
       if (newRoundIndex >= prev.currentRoundLocations.length) {
+        // Save game progress to localStorage
+       const newGameData = {
+        score: newTotalScore,
+        locations: prev.currentRoundLocations.map(loc => loc.name),
+      };
+      const savedGames = JSON.parse(localStorage.getItem("games") || "[]");
+      savedGames.push(newGameData);
+      localStorage.setItem("games", JSON.stringify(savedGames));
         return {
           ...prev,
           totalScore: newTotalScore,
@@ -285,6 +293,9 @@ export default function BeeSwarmGeoguesser() {
       goToNextLocation();
       return;
     }
+
+    
+
     const timer = setTimeout(() => {
       setCountdown(prev => (prev !== null ? prev - 1 : 0));
     }, 1000);
