@@ -9,6 +9,7 @@ import {
   MapPinIcon, 
   BoltIcon, 
   GlobeAltIcon,
+  TrophyIcon,
   CheckCircleIcon,
   MapIcon,
   UsersIcon,
@@ -52,35 +53,36 @@ const testimonials = [
 
 const features = [
   {
-    title: "Immersive Bee Physics",
-    desc: "Experience realistic swarm behavior as you navigate through diverse environments with your hive.",
-    icon: BoltIcon,
-  },
-  {
-    title: "Global Locations",
-    desc: "Test your geography skills across 100+ unique locations from meadows to mountains.",
+    title: "Explore the Bee Swarm World",
+    desc: "Test your knowledge by identifying locations from the Bee Swarm universe using in-game screenshots and landmarks.",
     icon: GlobeAltIcon,
   },
   {
-    title: "Hive Mind Challenge",
-    desc: "Compete with friends to see who can identify locations fastest and build the largest swarm.",
+    title: "Over 30 Unique Locations",
+    desc: "Challenge yourself with 30+ hand-picked locations, from well-known areas to hidden spots only true players will recognize.",
     icon: MapIcon,
+  },
+  {
+    title: "Compete & Track Your Scores",
+    desc: "Earn points for accurate guesses, track your high scores, and challenge friends to see who knows the map best!",
+    icon: TrophyIcon,
   }
 ];
 
+
 const pricingTiers = [
   {
-    name: "Worker Bee",
+    name: "Free Player",
     price: "Free",
-    features: ["3 starter locations", "Basic swarm mechanics", "Daily challenges"],
-    cta: "Start Buzzing",
+    features: ["3 starter locations"],
+    cta: "Try now",
     demo: true
   },
   {
-    name: "Queen Bee",
-    price: "€2/month",
-    features: ["Unlimited locations", "Advanced swarm customization", "Global leaderboards", "Exclusive seasonal events"],
-    cta: "Upgrade Hive",
+    name: "Pro BeeOquesser",
+    price: "€2/lifetime",
+    features: ["Unlock all 30+ locations", "Save game progress & history", "Advanced UI", ""],
+    cta: "Upgrade Now",
     highlighted: true
   }
 ];
@@ -97,13 +99,13 @@ const AuthButton = () => {
             href="/lobby"
             className="rounded-full bg-amber-500 px-6 py-3 text-white hover:bg-amber-400 transition-all"
           >
-            Enter Hive
+            Play
           </Link>
           <button 
             onClick={() => signOut()}
             className="rounded-full bg-amber-100 px-6 py-3 text-amber-800 hover:bg-amber-200 transition-all"
           >
-            Fly Away
+            Sign out
           </button>
         </div>
       ) : (
@@ -117,7 +119,7 @@ const AuthButton = () => {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          Join the Hive
+          Login
         </button>
       )}
     </>
@@ -378,62 +380,72 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How to Play Section */}
-      <section className="py-24 bg-amber-100">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight text-amber-900 sm:text-4xl">
-              How to Play
-            </h2>
-          </motion.div>
-          
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <motion.div 
-              variants={fadeInUpVariants}
-              className="bg-white rounded-xl p-8 shadow-md text-center"
-            >
-              <div className="w-16 h-16 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-amber-800 text-2xl font-bold">1</span>
-              </div>
-              <h3 className="text-xl font-semibold text-amber-900 mb-4">Take Flight</h3>
-              <p className="text-amber-700">Join a bee swarm and fly around mysterious locations from a unique bee perspective.</p>
-            </motion.div>
-            
-            <motion.div 
-              variants={fadeInUpVariants}
-              className="bg-white rounded-xl p-8 shadow-md text-center"
-            >
-              <div className="w-16 h-16 bg-amber-300 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-amber-800 text-2xl font-bold">2</span>
-              </div>
-              <h3 className="text-xl font-semibold text-amber-900 mb-4">Explore & Observe</h3>
-              <p className="text-amber-700">Observe landmarks, flora, and environment clues to determine your location.</p>
-            </motion.div>
-            
-            <motion.div 
-              variants={fadeInUpVariants}
-              className="bg-white rounded-xl p-8 shadow-md text-center"
-            >
-              <div className="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-amber-800 text-2xl font-bold">3</span>
-              </div>
-              <h3 className="text-xl font-semibold text-amber-900 mb-4">Guess & Grow</h3>
-              <p className="text-amber-700">Make your guess on the map! Accurate guesses help your hive grow stronger and unlock new areas.</p>
-            </motion.div>
-          </motion.div>
+{/* How to Play Section */}
+<section className="py-24 bg-amber-100">
+  <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <motion.div 
+      className="text-center mb-16"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+    >
+      <h2 className="text-3xl font-bold tracking-tight text-amber-900 sm:text-4xl">
+        How to Play
+      </h2>
+    </motion.div>
+
+    <motion.div 
+      className="grid grid-cols-1 md:grid-cols-3 gap-8"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+    >
+      {/* Step 1 */}
+      <motion.div 
+        variants={fadeInUpVariants}
+        className="bg-white rounded-xl p-8 shadow-md text-center"
+      >
+        <div className="w-16 h-16 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-amber-800 text-2xl font-bold">1</span>
         </div>
-      </section>
+        <h3 className="text-xl font-semibold text-amber-900 mb-4">Analyze the Image</h3>
+        <p className="text-amber-700">
+          Look closely at the in-game screenshot. Identify key landmarks, objects, and clues to figure out where it was taken.
+        </p>
+      </motion.div>
+
+      {/* Step 2 */}
+      <motion.div 
+        variants={fadeInUpVariants}
+        className="bg-white rounded-xl p-8 shadow-md text-center"
+      >
+        <div className="w-16 h-16 bg-amber-300 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-amber-800 text-2xl font-bold">2</span>
+        </div>
+        <h3 className="text-xl font-semibold text-amber-900 mb-4">Place Your Guess</h3>
+        <p className="text-amber-700">
+          Use the interactive map to select the exact location where you think the image was taken.
+        </p>
+      </motion.div>
+
+      {/* Step 3 */}
+      <motion.div 
+        variants={fadeInUpVariants}
+        className="bg-white rounded-xl p-8 shadow-md text-center"
+      >
+        <div className="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-amber-800 text-2xl font-bold">3</span>
+        </div>
+        <h3 className="text-xl font-semibold text-amber-900 mb-4">Check Your Score</h3>
+        <p className="text-amber-700">
+          The closer your guess, the higher your score! Improve your accuracy and challenge friends to beat your record.
+        </p>
+      </motion.div>
+    </motion.div>
+  </div>
+</section>
+
 
       {/* Testimonials Section */}
       <section className="py-24 bg-white">
