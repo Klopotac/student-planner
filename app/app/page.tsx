@@ -150,22 +150,36 @@ export default function BeeSwarmGeoguesser() {
     startNewRound();
   };
 
-  // Move to the next location or finish the game.
   const goToNextLocation = () => {
     setGameState(prev => {
       const newTotalScore = prev.totalScore + (prev.score || 0);
       const newHighScore = Math.max(newTotalScore, prev.highScore);
       localStorage.setItem("highScore", newHighScore.toString());
       const newRoundIndex = prev.currentRoundIndex + 1;
+  
+      // Load previously discovered locations
+      const discoveredLocations = new Set<string>(JSON.parse(localStorage.getItem("discoveredLocations") || "[]"));
+  
+      // Add only new locations to discovered list
+      prev.currentRoundLocations.forEach(loc => {
+        if (!discoveredLocations.has(loc.name)) {
+          discoveredLocations.add(loc.name);
+        }
+      });
+  
+      // Save updated discoveries
+      localStorage.setItem("discoveredLocations", JSON.stringify(Array.from(discoveredLocations)));
+  
       if (newRoundIndex >= prev.currentRoundLocations.length) {
         // Save game progress to localStorage
-       const newGameData = {
-        score: newTotalScore,
-        locations: prev.currentRoundLocations.map(loc => loc.name),
-      };
-      const savedGames = JSON.parse(localStorage.getItem("games") || "[]");
-      savedGames.push(newGameData);
-      localStorage.setItem("games", JSON.stringify(savedGames));
+        const newGameData = {
+          score: newTotalScore,
+          locations: prev.currentRoundLocations.map(loc => loc.name),
+        };
+        const savedGames = JSON.parse(localStorage.getItem("games") || "[]");
+        savedGames.push(newGameData);
+        localStorage.setItem("games", JSON.stringify(savedGames));
+  
         return {
           ...prev,
           totalScore: newTotalScore,
@@ -188,8 +202,10 @@ export default function BeeSwarmGeoguesser() {
         };
       }
     });
+  
     setCountdown(null);
   };
+  
 
   const calculateDistancePixels = (point1: Coordinates, point2: Coordinates): number => {
     const dx = point2.x - point1.x;
