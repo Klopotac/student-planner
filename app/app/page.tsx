@@ -23,37 +23,37 @@ interface Location {
 }
 
 const LOCATIONS: Location[] = [
-  { name: "Gift Shop", coordinates: { x: 2951, y: 2700 }, image: "/locations/gift.png", description: "", difficulty: "Easy", hint: "" },
-  { name: "Sticker Path", coordinates: { x: 2524, y: 1763 }, image: "/locations/sticker.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "Comando Spot", coordinates: { x: 3245, y: 2831 }, image: "/locations/comando.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "White Selling Area", coordinates: { x: 539, y: 2321 }, image: "/locations/shop.png", description: "", difficulty: "Impossible", hint: "" },
-  { name: "Switch Location", coordinates: { x: 2965, y: 2324 }, image: "/locations/sw.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "Spike Zone", coordinates: { x: 2281, y: 3659 }, image: "/locations/spike.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Score Board", coordinates: { x: 2389, y: 2459 }, image: "/locations/panda.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Blue Landmark", coordinates: { x: 1233, y: 3440 }, image: "/locations/blue.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Sprink", coordinates: { x: 1026, y: 2178 }, image: "/locations/sprink.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "Lights", coordinates: { x: 1843, y: 2151 }, image: "/locations/lights.png", description: "", difficulty: "Hard", hint: "" },
+  { name: "", coordinates: { x: 2964, y: 2638 }, image: "/locations/gift.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 2524, y: 1763 }, image: "/locations/sticker.png", description: "", difficulty: "Hard", hint: "" },
+  { name: "", coordinates: { x: 3245, y: 2831 }, image: "/locations/comando.png", description: "", difficulty: "Hard", hint: "" },
+  { name: "", coordinates: { x: 539, y: 2321 }, image: "/locations/shop.png", description: "", difficulty: "Impossible", hint: "" },
+  { name: "", coordinates: { x: 2965, y: 2324 }, image: "/locations/sw.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 2281, y: 3659 }, image: "/locations/spike.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 2389, y: 2459 }, image: "/locations/panda.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 1233, y: 3440 }, image: "/locations/blue.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 1026, y: 2178 }, image: "/locations/sprink.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 1843, y: 2151 }, image: "/locations/lights.png", description: "", difficulty: "Medium", hint: "" },
 
-  { name: "Ant", coordinates: { x: 2146, y: 3807 }, image: "/locations/ant.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Cloud", coordinates: { x: 1330, y: 1644 }, image: "/locations/cloud.png", description: "", difficulty: "Easy", hint: "" },
-  { name: "Cog", coordinates: { x: 2246, y: 3266 }, image: "/locations/cog.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "Cog Display", coordinates: { x: 1590, y: 1335 }, image: "/locations/cogdisp.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Cookie", coordinates: { x: 1436, y: 2581 }, image: "/locations/cooke.png", description: "", difficulty: "Easy", hint: "" },
-  { name: "Crab", coordinates: { x: 1465, y: 3908 }, image: "/locations/crab.png", description: "", difficulty: "Impossible", hint: "" },
-  { name: "Lion", coordinates: { x: 2432, y: 1893 }, image: "/locations/lion.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "Lock", coordinates: { x: 1370, y: 3811 }, image: "/locations/lock.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Meteor", coordinates: { x: 658, y: 2445 }, image: "/locations/meteor.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "Memory Match", coordinates: { x: 2444, y: 2084 }, image: "/locations/mm.png", description: "", difficulty: "Easy", hint: "" },
-  { name: "Nectar", coordinates: { x: 2523, y: 1278 }, image: "/locations/nectar.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Red Portal", coordinates: { x: 3084, y: 2357 }, image: "/locations/redportal.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Roof", coordinates: { x: 1202, y: 2850 }, image: "/locations/roof.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "Shadow Bear", coordinates: { x: 2090, y: 586 }, image: "/locations/shadowbear.png", description: "", difficulty: "Impossible", hint: "" },
-  { name: "Straw", coordinates: { x: 1157, y: 3094 }, image: "/locations/straw.png", description: "", difficulty: "Easy", hint: "" },
-  { name: "Target", coordinates: { x: 2513, y: 2721 }, image: "/locations/target.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Top Bear", coordinates: { x: 2070, y: 1753 }, image: "/locations/topbear.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Trade", coordinates: { x: 2635, y: 3785 }, image: "/locations/trade.png", description: "", difficulty: "Medium", hint: "" },
-  { name: "Tunnel", coordinates: { x: 3474, y: 2280 }, image: "/locations/TUNEL.png", description: "", difficulty: "Hard", hint: "" },
-  { name: "White", coordinates: { x: 477, y: 3434 }, image: "/locations/white.png", description: "", difficulty: "Medium", hint: "" }
+  { name: "", coordinates: { x: 2146, y: 3807 }, image: "/locations/ant.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 1330, y: 1644 }, image: "/locations/cloud.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 2246, y: 3266 }, image: "/locations/cog.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 1590, y: 1335 }, image: "/locations/cogdisp.png", description: "", difficulty: "Hard", hint: "" },
+  { name: "", coordinates: { x: 1436, y: 2581 }, image: "/locations/cooke.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 1465, y: 3908 }, image: "/locations/crab.png", description: "", difficulty: "Impossible", hint: "" },
+  { name: "", coordinates: { x: 2432, y: 1893 }, image: "/locations/lion.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 1370, y: 3811 }, image: "/locations/lock.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 658, y: 2445 }, image: "/locations/meteor.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 2444, y: 2084 }, image: "/locations/mm.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 2523, y: 1278 }, image: "/locations/nectar.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 3084, y: 2357 }, image: "/locations/redportal.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 1202, y: 2850 }, image: "/locations/roof.png", description: "", difficulty: "Hard", hint: "" },
+  { name: "", coordinates: { x: 2090, y: 586 }, image: "/locations/shadowbear.png", description: "", difficulty: "Hard", hint: "" },
+  { name: "", coordinates: { x: 1157, y: 3094 }, image: "/locations/straw.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 2513, y: 2721 }, image: "/locations/target.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 2070, y: 1753 }, image: "/locations/topbear.png", description: "", difficulty: "Medium", hint: "" },
+  { name: "", coordinates: { x: 2635, y: 3785 }, image: "/locations/trade.png", description: "", difficulty: "Easy", hint: "" },
+  { name: "", coordinates: { x: 3474, y: 2280 }, image: "/locations/TUNEL.png", description: "", difficulty: "Hard", hint: "" },
+  { name: "", coordinates: { x: 477, y: 3434 }, image: "/locations/white.png", description: "", difficulty: "Impossible", hint: "" }
 ];
 
 
@@ -252,7 +252,7 @@ export default function BeeSwarmGeoguesser() {
       score,
       isGuessSubmitted: true,
     }));
-    setCountdown(3);
+    setCountdown(2);
   };
 
   // Countdown effect before moving to the next location.
