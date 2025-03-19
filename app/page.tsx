@@ -72,16 +72,16 @@ const features = [
 
 const pricingTiers = [
   {
-    name: "Free Player",
+    name: "Demo",
     price: "Free",
     features: ["3 starter locations"],
     cta: "Try now",
     demo: true
   },
   {
-    name: "Pro BeeOquesser",
+    name: "Pro",
     price: "€2/lifetime",
-    features: ["Unlock all 30+ locations", "Save game progress & history", "Advanced UI", ""],
+    features: ["Unlock all 30+ locations", "Save game progress & history", "Advanced UI", "Lifetime access"],
     cta: "Upgrade Now",
     highlighted: true
   }
@@ -321,7 +321,7 @@ export default function Home() {
                     href="#features"
                     className="rounded-full bg-amber-500 px-8 py-4 text-lg font-semibold text-white shadow-sm hover:bg-amber-400 transition-all duration-200 hover:scale-105"
                   >
-                    Start Buzzing
+                    Get started
                   </Link>
                   <Link
                     href="#trailer"
@@ -380,71 +380,6 @@ export default function Home() {
         </div>
       </section>
 
-{/* How to Play Section */}
-<section className="py-24 bg-amber-100">
-  <div className="mx-auto max-w-7xl px-6 lg:px-8">
-    <motion.div 
-      className="text-center mb-16"
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
-    >
-      <h2 className="text-3xl font-bold tracking-tight text-amber-900 sm:text-4xl">
-        How to Play
-      </h2>
-    </motion.div>
-
-    <motion.div 
-      className="grid grid-cols-1 md:grid-cols-3 gap-8"
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-    >
-      {/* Step 1 */}
-      <motion.div 
-        variants={fadeInUpVariants}
-        className="bg-white rounded-xl p-8 shadow-md text-center"
-      >
-        <div className="w-16 h-16 bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-amber-800 text-2xl font-bold">1</span>
-        </div>
-        <h3 className="text-xl font-semibold text-amber-900 mb-4">Analyze the Image</h3>
-        <p className="text-amber-700">
-          Look closely at the in-game screenshot. Identify key landmarks, objects, and clues to figure out where it was taken.
-        </p>
-      </motion.div>
-
-      {/* Step 2 */}
-      <motion.div 
-        variants={fadeInUpVariants}
-        className="bg-white rounded-xl p-8 shadow-md text-center"
-      >
-        <div className="w-16 h-16 bg-amber-300 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-amber-800 text-2xl font-bold">2</span>
-        </div>
-        <h3 className="text-xl font-semibold text-amber-900 mb-4">Place Your Guess</h3>
-        <p className="text-amber-700">
-          Use the interactive map to select the exact location where you think the image was taken.
-        </p>
-      </motion.div>
-
-      {/* Step 3 */}
-      <motion.div 
-        variants={fadeInUpVariants}
-        className="bg-white rounded-xl p-8 shadow-md text-center"
-      >
-        <div className="w-16 h-16 bg-amber-400 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-amber-800 text-2xl font-bold">3</span>
-        </div>
-        <h3 className="text-xl font-semibold text-amber-900 mb-4">Check Your Score</h3>
-        <p className="text-amber-700">
-          The closer your guess, the higher your score! Improve your accuracy and challenge friends to beat your record.
-        </p>
-      </motion.div>
-    </motion.div>
-  </div>
-</section>
 
 
       {/* Testimonials Section */}
@@ -593,11 +528,11 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl font-bold text-white mb-6">
-              Ready to Join the Swarm?
+              Ready to Play?
             </h2>
             <p className="text-amber-100 mb-8 max-w-2xl mx-auto">
-              Explore the world from a whole new perspective. Test your geography skills, 
-              build your hive, and compete with friends in Bee Swarm Geo Guesser!
+              Explore the BSS world from a whole new perspective. Test your geography skills, 
+              build your hive, try demo!
             </p>
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -653,10 +588,11 @@ export default function Home() {
           </div>
           <div className="mt-8 border-t border-amber-800 pt-8 text-center">
             <p className="text-sm text-amber-400">
-              &copy; 2025 Bee Swarm Geo Guesser. All rights reserved.
+              &copy;  BSS Guesser. Fan-made project. Not affiliated with Bee Swarm Simulator or GeoGuessr. 
             </p>
             <p className="text-sm text-amber-400 mt-2">
-              Need help? Email us at <a href="mailto:buzz@beeswarmgeo.com" className="underline">buzz@beeswarmgeo.com</a>
+              Need help? Email us at <a href="mailto:buzz@beeswarmgeo.com" className="underline">gepardnik100@gmail.com</a>
+              If you are the owner of any content used in this project and have concerns, please contact me, and I will take immediate action, including removing the site if necessary.
             </p>
           </div>
         </div>

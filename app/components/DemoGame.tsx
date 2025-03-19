@@ -312,7 +312,7 @@ export default function DemoGame() {
       </header>
       <div className="mb-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded">
         <p className="font-medium">Demo Mode</p>
-        <p className="text-sm">This is a free demo with 3 locations. The full game offers 10+ locations and additional features.</p>
+        <p className="text-sm">This is a free demo with 3 locations. The full game offers 30+ locations, a lobby, better looking UI.</p>
       </div>
       <main className="flex flex-col lg:flex-row gap-4">
         {/* Map container */}

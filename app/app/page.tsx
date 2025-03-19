@@ -369,7 +369,7 @@ export default function BeeSwarmGeoguesser() {
       <header className="mb-6 flex flex-col sm:flex-row justify-between items-center">
         <div className="flex items-center mb-4 sm:mb-0">
           <MapPin className="mr-2" />
-          <h1 className="text-3xl font-bold">Bee Swarm GeoGuesser</h1>
+          <h1 className="text-3xl font-bold">Bee Swarm Guesser</h1>
         </div>
         <div className="flex items-center space-x-6">
           <div className="text-lg flex items-center">
