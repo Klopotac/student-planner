@@ -474,50 +474,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Screenshot Gallery */}
-      <section className="py-24 bg-amber-900 text-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <motion.div 
-            className="text-center mb-16"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Glimpse Into the Hive
-            </h2>
-            <p className="mt-4 text-amber-200 max-w-2xl mx-auto">
-              See the world through a bee's eyes and challenge your geographical knowledge
-            </p>
-          </motion.div>
-          
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <motion.div 
-                key={item}
-                variants={fadeInUpVariants}
-                whileHover={{ y: -5 }}
-                className="bg-amber-800 rounded-lg overflow-hidden"
-              >
-                <div className="aspect-video bg-amber-700 flex items-center justify-center">
-                  <div className="text-amber-500 font-semibold">Gameplay Screenshot {item}</div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-medium text-amber-100">Location Example {item}</h3>
-                  <p className="text-amber-300 text-sm mt-1">Can you guess where your swarm is?</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
+ 
       {/* Call-to-Action Section */}
       <section className="py-24 bg-amber-500">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -532,7 +489,7 @@ export default function Home() {
             </h2>
             <p className="text-amber-100 mb-8 max-w-2xl mx-auto">
               Explore the BSS world from a whole new perspective. Test your geography skills, 
-              build your hive, try demo!
+              in BSS, try demo!
             </p>
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -540,7 +497,7 @@ export default function Home() {
               className="bg-white text-amber-600 px-8 py-4 rounded-full font-semibold hover:bg-amber-50 transition-colors duration-200"
               onClick={handleDemo}
             >
-              Start Your Adventure
+              Try the Demo
             </motion.button>
           </motion.div>
         </div>
@@ -551,48 +508,38 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <h4 className="font-semibold mb-4">Hive Basics</h4>
+              
               <ul className="space-y-2 text-amber-200">
-                <li>How to Play</li>
-                <li>Game Features</li>
-                <li>FAQ</li>
-                <li>Support</li>
+              
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Bee Community</h4>
+              
               <ul className="space-y-2 text-amber-200">
-                <li>About Us</li>
-                <li>Bee Blog</li>
-                <li>Leaderboards</li>
-                <li>Contact</li>
+
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Honey Rules</h4>
               <ul className="space-y-2 text-amber-200">
-                <li>Privacy</li>
-                <li>Terms</li>
-                <li>Security</li>
+                
+               
+                
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Buzz With Us</h4>
-              <ul className="space-y-2 text-amber-200">  
-                <li>Twitter</li>
-                <li>Discord</li>
-                <li>Facebook</li>
-                <li>Instagram</li>
-              </ul>
+             
+             
+
             </div>
           </div>
           <div className="mt-8 border-t border-amber-800 pt-8 text-center">
             <p className="text-sm text-amber-400">
-              &copy;  BSS Guesser. Fan-made project. Not affiliated with Bee Swarm Simulator or GeoGuessr. 
+              BSS Guesser. Fan-made project. Not affiliated with Bee Swarm Simulator or GeoGuessr. 
             </p>
             <p className="text-sm text-amber-400 mt-2">
-              Need help? Email us at <a href="mailto:buzz@beeswarmgeo.com" className="underline">gepardnik100@gmail.com</a>
-              If you are the owner of any content used in this project and have concerns, please contact me, and I will take immediate action, including removing the site if necessary.
+              Need help? Email us at <a href="mailto:gepardnik100@gmail.com" className="underline">gepardnik100@gmail.com</a>
+              If you are the owner of any content used in this project and have concerns, please contact me, and I will take immediate action, including removing the site if necessary, I don't want legal trouble, this is a project for fun.
             </p>
           </div>
         </div>
